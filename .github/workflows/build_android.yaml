@@ -12,4 +12,4 @@ jobs:
           curl -X POST https://api.github.com/repos/DeltaPi-New-Century/TC2Infra/dispatches \
           -H 'Accept: application/vnd.github.v3+json' \
           -H 'Authorization: token ${{ secrets.TIPCALCULATOR_PAT }}' \
-          --data '{"event_type": "build-repo-b", "client_payload": {"sha": "${{ github.sha }}", "ref": "${{ github.ref }}"}}'
+          --data '{"event_type": "build-tipcalculator", "client_payload": {"sha": "${{ github.sha }}", "ref": "${{ github.ref }}"}}'
