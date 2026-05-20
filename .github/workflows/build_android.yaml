@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - main # Adjust to your target branch
+      - master
 jobs:
   dispatch:
     runs-on: ubuntu-latest
