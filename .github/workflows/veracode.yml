@@ -1,96 +1,154 @@
-veracode_static_scan:
-  push:
-    trigger: true
-    # Please only specify either branches_to_run or branches_to_exclude
-    # Entering both will only execute branches_to_run
-    # Leaving them both blank means this will never run
-    branches_to_run:
-      - '*'
-    branches_to_exclude:
-  pull_request:
-    trigger: true
-    action:
-      - opened
-      - synchronize
-    target_branch:
-      - master 
-  # If the analysis_on_platform is set to true,
-  # Veracode will save your last scan result, on the default branch, as an application profile with the same name as your scanned repository on the Veracode platform. 
-  # If the analysis_on_platform is set to false, scan results will not be saved to the Veracode platform.
-  analysis_on_platform: false
-  # If break_build_policy_findings is set to true, the build will break when findings violate the policy.
-  break_build_policy_findings: true
-  # If break_build_invalid_policy is set to true, the build will break when the policy name is invalid.
-  break_build_invalid_policy: true
-  # If the break_build_on_error is set to true, the build will break if the scan failed to complete in time or with an error and the error_message will be displayed.
-  break_build_on_error: false
-  error_message: "Veracode static scan faced a problem. Please contact your Veracode administrator for more information."
-  # Default policy to be used if a policy isn't already assigned to the application profile.
-  policy: 'Veracode Recommended Medium + SCA'
-  # If the create_code_scanning_alert is set to true, GitHub security code scanning vulnerability alerts will be created for static findings.
-  create_code_scanning_alert: false
-  # If the create_issue is set to true, GitHub Issues will be created for static findings.
-  create_issue: false
-  # If the trigger is set to true, a scan is triggered when you create an issue containing the commands value or add a comment containing the commands value to an issue.
-  # Syntax to be used - COMMANDS_VALUE [branch: BRANCH_NAME]
-  issues:
-    trigger: false
-    commands:
-      - "Veracode Static Scan"
+name: Veracode Static Code Analysis
 
-veracode_sca_scan:
-  push:
-    trigger: true
-    # Please only specify either branches_to_run or branches_to_exclude
-    # Entering both will only execute branches_to_run
-    # Leaving them both blank means this will never run
-    branches_to_run:
-      - '*'
-    branches_to_exclude:
-  pull_request:
-    trigger: true
-    action:
-      - opened
-      - synchronize
-    target_branch:
-      - default_branch
-  # If the break_build_on_error is set to true, the build will break if the scan failed to complete or with an error, no libraries were found, 
-  # or no build system was found and the error_message will be displayed.
-  break_build_on_error: true
-  break_build_policy_findings: true
-  error_message: "Veracode SCA scan faced a problem. Please contact your Veracode administrator for more information."
-  # If the trigger is set to true, a scan is triggered when you create an issue containing the commands value or add a comment containing the commands value to an issue.
-  # Syntax to be used - COMMANDS_VALUE [branch: BRANCH_NAME]
-  issues:
-    trigger: false
-    commands:
-      - "Veracode SCA Scan"
+run-name: Static Code Analysis - ${{ github.event.client_payload.repository.name }}
 
-veracode_iac_secrets_scan:
-  push:
-    trigger: true
-    # Please only specify either branches_to_run or branches_to_exclude
-    # Entering both will only execute branches_to_run
-    # Leaving them both blank means this will never run
-    branches_to_run:
-      - '*'
-    branches_to_exclude:
-  pull_request:
-    trigger: true
-    action:
-      - opened
-      - synchronize
-    target_branch:
-      - master
-  # If break_build_policy_findings is set to true, the build will break when findings violate the policy.
-  break_build_policy_findings: true
-  # If the break_build_on_error is set to true, the build will break if the scan failed to complete or with an error, no libraries were found, 
-  # or no build system was found and the error_message will be displayed.
-  break_build_on_error: true
-  error_message: "Veracode IAC secrets scan faced a problem. Please contact your Veracode administrator for more information."
-  # If the trigger is set to true, a scan is triggered when you create an issue containing the commands value or add a comment containing the commands value to an issue.
-  # Syntax to be used - COMMANDS_VALUE [branch: BRANCH_NAME]
-  issues:
-    trigger: false
-    commands:
-      - "Veracode IAC Scan"
+concurrency:
+  group: ${{ github.event.client_payload.event_type }}-${{ github.event.client_payload.repository.name }}-${{ github.event.client_payload.repository.branch }}
+  cancel-in-progress: true
+
+on:
+  repository_dispatch:
+    types:
+      - source-code-pipeline-scan
+      - source-code-policy-scan
+      - dot-net-pipeline-scan
+      - dot-net-policy-scan
+      - go-pipeline-scan
+      - go-policy-scan
+      - tsql-pipeline-scan
+      - tsql-policy-scan
+      - plsql-pipeline-scan
+      - plsql-policy-scan
+      - php-pipeline-scan
+      - php-policy-scan
+      - scala-pipeline-scan
+      - scala-policy-scan
+      - dart-pipeline-scan
+      - dart-policy-sca
+      - java-pipeline-scan
+      - java-policy-scan
+      - unidentified-lang-pipeline-scan
+      - unidentified-lang-policy-scan
+      - ruby-pipeline-scan
+      - ruby-policy-scan
+
+jobs:
+  cleanup:
+    uses: ./.github/workflows/veracode-clean-up.yml
+    with:
+      runs_on: ${{ github.event.client_payload.user_config.default_runs_on }}
+
+  register:
+    needs: cleanup
+    uses: ./.github/workflows/veracode-check-run.yml
+    with:
+      check_run_name: ${{ github.workflow }} - ${{ contains(github.event.action, 'policy') && 'Policy' || 'Pipeline' }}
+      head_sha: ${{ github.event.client_payload.sha }}
+      repository_owner: ${{ github.event.client_payload.repository.owner }}
+      repository_name: ${{ github.event.client_payload.repository.name }}
+      event_type: ${{ github.event.client_payload.event_type }}
+      github_token: ${{ github.event.client_payload.token }}
+      run_id: ${{ github.run_id }}
+      branch: ${{ github.event.client_payload.repository.branch }}
+      default_runs_on: ${{ github.event.client_payload.user_config.default_runs_on }}
+
+  validations:
+    needs: register
+    runs-on: ${{ fromJson(github.event.client_payload.user_config.default_runs_on) }}
+    name: Validations
+    steps:
+      - name: Verify Veracode API credentials
+        id: verify_api_creds
+        uses: veracode/github-actions-integration-helper@v0.1.9
+        with:
+          action: validateVeracodeApiCreds
+          token: ${{ github.event.client_payload.token }}
+          vid: ${{ secrets.VERACODE_API_ID }}
+          vkey: ${{ secrets.VERACODE_API_KEY }}
+          appname: ${{ github.event.client_payload.user_config.profile_name }}
+          source_repository: ${{ github.event.client_payload.repository.full_name }}
+          check_run_id: ${{ needs.register.outputs.run_id }}
+
+      - name: Verify Policy name
+        id: verify_policy_name
+        if: success()
+        uses: veracode/github-actions-integration-helper@v0.1.9
+        with:
+          action: validatePolicyName
+          token: ${{ github.event.client_payload.token }}
+          vid: ${{ secrets.VERACODE_API_ID }}
+          vkey: ${{ secrets.VERACODE_API_KEY }}
+          appname: ${{ github.event.client_payload.user_config.profile_name }}
+          source_repository: ${{ github.event.client_payload.repository.full_name }}
+          check_run_id: ${{ needs.register.outputs.run_id }}
+          policyname: ${{ github.event.client_payload.policy_name }}
+          path: ${{ github.event.client_payload.annotationObj.path }}
+          start_line: ${{ github.event.client_payload.annotationObj.start_line }}
+          end_line: ${{ github.event.client_payload.annotationObj.end_line }}
+          break_build_invalid_policy: ${{github.event.client_payload.break_build_invalid_policy }}
+
+  build:
+    needs: validations
+    uses: ./.github/workflows/veracode-build-artifact-for-scanning.yml
+    with:
+      repository: ${{ github.event.client_payload.repository.full_name }}
+      ref: ${{ github.event.client_payload.sha }}
+      token: ${{ github.event.client_payload.token }}
+      event_name: ${{ github.event.action }}
+      build_runs_on: ${{ github.event.client_payload.user_config.build_runs_on }}
+      build_packager_image: ${{ github.event.client_payload.user_config.build_packager_image }}
+      build_predependency_command: ${{ github.event.client_payload.user_config.build_predependency_command }}
+      ruby_version: ${{ github.event.client_payload.user_config.ruby_version }}
+      bundle_version: ${{ github.event.client_payload.user_config.bundle_version }}
+      default_runs_on: ${{ github.event.client_payload.user_config.default_runs_on }}
+      debug: ${{ github.event.client_payload.user_config.debug }}
+
+  pipeline_scan:
+    # needs the build step before this job will start running
+    needs: [build, register]
+    if: contains(github.event.action, 'pipeline')
+    uses: ./.github/workflows/veracode-pipeline-scan.yml
+    with:
+      policy_name: ${{ github.event.client_payload.policy_name }}
+      create_code_scanning_alert: ${{ github.event.client_payload.user_config.create_code_scanning_alert }}
+      owner: ${{ github.event.client_payload.repository.owner }}
+      repo: ${{ github.event.client_payload.repository.name }}
+      sha: ${{ github.event.client_payload.sha }}
+      token: ${{ github.event.client_payload.token }}
+      ref: ${{ github.event.client_payload.user_config.ref }}
+      create_issue: ${{ github.event.client_payload.user_config.create_issue }}
+      source_repository: ${{ github.event.client_payload.repository.full_name }}
+      check_run_id: ${{ needs.register.outputs.run_id }}
+      profile_name: ${{ github.event.client_payload.user_config.profile_name }}
+      break_build_policy_findings: ${{ github.event.client_payload.user_config.break_build_policy_findings }}
+      break_build_on_error: ${{ github.event.client_payload.user_config.break_build_on_error }}
+      filter_mitigated_flaws: ${{ github.event.client_payload.user_config.filter_mitigated_flaws }}
+      language: ${{ github.event.client_payload.repository.language }}
+      default_runs_on: ${{ github.event.client_payload.user_config.default_runs_on }}
+      debug: ${{ github.event.client_payload.user_config.debug }}
+    secrets: inherit
+
+  policy_scan:
+    needs: [build, register]
+    if: contains(github.event.action, 'policy')
+    uses: ./.github/workflows/veracode-policy-scan.yml
+    with:
+      profile_name: ${{ github.event.client_payload.user_config.profile_name }}
+      policy_name: ${{ github.event.client_payload.policy_name }}
+      modules_to_scan: ${{ github.event.client_payload.modules_to_scan }}
+      owner: ${{ github.event.client_payload.repository.owner }}
+      repo: ${{ github.event.client_payload.repository.name }}
+      sha: ${{ github.event.client_payload.sha }}
+      token: ${{ github.event.client_payload.token }}
+      ref: ${{ github.event.client_payload.user_config.ref }}
+      create_issue: ${{ github.event.client_payload.user_config.create_issue }}
+      create_code_scanning_alert: ${{ github.event.client_payload.user_config.create_code_scanning_alert }}
+      source_repository: ${{ github.event.client_payload.repository.full_name }}
+      check_run_id: ${{ needs.register.outputs.run_id }}
+      break_build_policy_findings: ${{ github.event.client_payload.user_config.break_build_policy_findings }}
+      break_build_on_error: ${{ github.event.client_payload.user_config.break_build_on_error }}
+      filter_mitigated_flaws: ${{ github.event.client_payload.user_config.filter_mitigated_flaws }}
+      language: ${{ github.event.client_payload.repository.language }}
+      default_runs_on: ${{ github.event.client_payload.user_config.default_runs_on }}
+      debug: ${{ github.event.client_payload.user_config.debug }}
+    secrets: inherit
