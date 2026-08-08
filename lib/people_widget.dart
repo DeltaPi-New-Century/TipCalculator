@@ -30,7 +30,9 @@ class MyPeopleWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
             child: TextField(
-              controller: TextEditingController()..text = "1",
+              controller: context.read<TipData>().peopleController,
+              // Head count comes from the people list in item mode.
+              enabled: !context.watch<TipData>().isSplitByItems,
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
@@ -48,9 +50,11 @@ class MyPeopleWidget extends StatelessWidget {
                 filled: false,
               ),
               onChanged: (String newValue) {
-                if (newValue != "" || newValue.isNotEmpty) {
-                  context.read<TipData>().setPeople(int.parse(newValue));
-                }
+                // Empty field falls back to 1 so the per-person maths stays
+                // meaningful while the user is retyping.
+                context.read<TipData>().setPeople(
+                  int.tryParse(newValue) ?? 1,
+                );
               },
             ),
           ),

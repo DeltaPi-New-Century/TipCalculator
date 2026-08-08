@@ -2,7 +2,7 @@ name: tip_calculator
 description: "Tip Calculator for Lazy People"
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 2.0.7+9
+version: 2.0.8+10
 
 environment:
   sdk: ^3.8.1

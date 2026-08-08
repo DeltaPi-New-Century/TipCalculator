@@ -33,6 +33,10 @@ class MyAmountWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
             child: TextField(
+              controller: context.read<TipData>().amountController,
+              // In item mode the bill is the sum of everyone's items, so a
+              // typed amount would be silently ignored.
+              enabled: !context.watch<TipData>().isSplitByItems,
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
@@ -59,9 +63,12 @@ class MyAmountWidget extends StatelessWidget {
                 filled: false,
               ),
               onChanged: (newAmount) {
-                context.read<TipData>().setAmount(
-                  double.parse(newAmount.replaceAll(",", ".")),
+                // Clearing the field, or a lone separator, is not a number --
+                // double.parse would throw on every keystroke.
+                final parsed = double.tryParse(
+                  newAmount.replaceAll(",", "."),
                 );
+                context.read<TipData>().setAmount(parsed ?? 0.00);
               },
             ),
           ),
