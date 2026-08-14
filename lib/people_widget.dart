@@ -1,62 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tip_calculator/service/tip_data.dart';
-// import 'package:tip_calculator/service/shared_data.dart';
+import 'package:tip_calculator/theme/app_colors.dart';
+import 'package:tip_calculator/widgets/ui.dart';
 
+/// Head count. A stepper rather than a keyboard: parties are small numbers.
 class MyPeopleWidget extends StatelessWidget {
   const MyPeopleWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color.fromRGBO(73, 247, 112, 0.5),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      margin: const EdgeInsets.all(5.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+    final colors = context.colors;
+    final tipData = context.watch<TipData>();
+    // In item mode the count comes from the people list, so editing it here
+    // would be discarded.
+    final locked = tipData.isSplitByItems;
+
+    return AppCard(
+      rail: colors.people,
+      child: Row(
         children: [
-          Wrap(
-            children: [
-              Text(
-                '${context.read<TipData>().translations['people_title']}',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
-            child: TextField(
-              controller: context.read<TipData>().peopleController,
-              // Head count comes from the people list in item mode.
-              enabled: !context.watch<TipData>().isSplitByItems,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-                labelText:
-                    '${context.read<TipData>().translations['people_input_text']}',
-                labelStyle: TextStyle(
-                  // fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-                filled: false,
-              ),
-              onChanged: (String newValue) {
-                // Empty field falls back to 1 so the per-person maths stays
-                // meaningful while the user is retyping.
-                context.read<TipData>().setPeople(
-                  int.tryParse(newValue) ?? 1,
-                );
-              },
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FieldLabel(tipData.t('people_title')),
+                if (locked)
+                  Text(
+                    tipData.t('split_by_items'),
+                    style: TextStyle(fontSize: 11.5, color: colors.ink3),
+                  ),
+              ],
             ),
+          ),
+          AppStepper(
+            value: tipData.people.toString(),
+            decrementLabel: tipData.t('people_title'),
+            incrementLabel: tipData.t('people_title'),
+            onDecrement: locked || tipData.people <= 1
+                ? null
+                : () => context.read<TipData>().decrementPeople(),
+            onIncrement: locked
+                ? null
+                : () => context.read<TipData>().incrementPeople(),
           ),
         ],
       ),

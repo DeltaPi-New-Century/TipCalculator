@@ -5,6 +5,7 @@ import 'package:tip_calculator/schemas/flag.dart';
 import 'package:tip_calculator/service/network.dart';
 import 'package:tip_calculator/schemas/country.dart';
 import 'package:tip_calculator/schemas/language.dart';
+import 'package:tip_calculator/service/translations_defaults.dart';
 
 class DatabaseData {
   String _version;
@@ -113,21 +114,11 @@ class DatabaseData {
         currency: CurrencyData(name: "\$", symbol: "\$"),
       ),
     );
-    Map<String, String> translationDefaults = {
-      "app_title": "Tip Calculator",
-      "amout_title": "Amount",
-      "amount_input_text": "Enter value",
-      "people_title": "People",
-      "people_input_text": "Enter value",
-      "tip_title": "Tip",
-      "tip_total": "Total",
-      "tip_total_per_person": "Per Person",
-      "tip_button_text": "Recommended for \$countryName",
-      "total_title": "Total",
-      "total_amount": "Amount",
-      "total_per_person": "Per Person",
-    };
-    dbData.setLanguageData(LanguagueData(translations: translationDefaults));
+    // Copied, because LanguagueData.setTranslation mutates the map it is given
+    // and kDefaultTranslations is a shared const.
+    dbData.setLanguageData(
+      LanguagueData(translations: Map<String, String>.from(kDefaultTranslations)),
+    );
     return dbData;
   }
 }

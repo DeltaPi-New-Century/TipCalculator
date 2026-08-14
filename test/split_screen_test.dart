@@ -3,11 +3,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:tip_calculator/service/tip_data.dart';
 import 'package:tip_calculator/split_screen.dart';
+import 'package:tip_calculator/theme/app_theme.dart';
 
 void main() {
   Widget wrap(final TipData tipData) => ChangeNotifierProvider<TipData>.value(
     value: tipData,
-    child: const MaterialApp(home: MySplitScreen()),
+    child: MaterialApp(
+      theme: AppTheme.light(),
+      home: const MySplitScreen(),
+    ),
   );
 
   testWidgets('adding an item to a person does not crash', (tester) async {

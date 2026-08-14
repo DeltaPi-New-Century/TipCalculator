@@ -8,6 +8,8 @@ import 'package:tip_calculator/service/gemini.dart';
 import 'package:tip_calculator/service/database.dart';
 import 'package:tip_calculator/service/language.dart';
 import 'package:tip_calculator/service/geolocation.dart';
+import 'package:tip_calculator/service/translations_defaults.dart';
+import 'package:tip_calculator/service/bundled_translations.dart';
 
 /// How the bill is divided.
 ///
@@ -25,6 +27,12 @@ class TipData with ChangeNotifier {
   String _actualPosition = "";
   SplitMode _splitMode = SplitMode.evenly;
   final List<Person> _persons = [];
+
+  /// Starts as the English defaults so the very first frame is never blank,
+  /// then is replaced wholesale as each layer resolves.
+  Map<String, String> _translations = Map<String, String>.from(
+    kDefaultTranslations,
+  );
 
   /// Owned here so [loadFrom] can push restored values back into the fields.
   /// Widgets must not create their own -- a controller rebuilt on every build
@@ -87,20 +95,35 @@ class TipData with ChangeNotifier {
       (_databaseData != null && _databaseData!.countryData != null)
       ? _databaseData!.countryData!.currency.name
       : "USD";
-  Map<String, String> get translations =>
-      (_databaseData != null && _databaseData!.languageData != null)
-      ? _databaseData!.languageData!.translations
-      : {};
+  /// The resolved translation set: English defaults, overlaid with the
+  /// bundled asset for the user's language, overlaid with the remote database.
+  ///
+  /// Built once in [_initialize] rather than merged per lookup -- a stale
+  /// remote must not be able to leave one screen in Spanish and the next in
+  /// English, which is what happens when each key falls back independently.
+  Map<String, String> get translations => _translations;
+
+  /// Translated string for [key].
+  ///
+  /// Returns [key] itself if it is unknown everywhere, which makes a missing
+  /// translation obvious instead of blank.
+  String t(final String key) => _translations[key] ?? key;
 
   Future<void> _initialize() async {
     // Geolocation and the remote database both go over the network, and the
     // temp directory needs a platform plugin. Any of them can fail; none of
     // them should take the app down -- the calculator works offline with the
     // built-in defaults.
+    final langCode = Language.getLanguageCode();
+
+    // Layer 2: the bundled asset. Loaded first and independently of the
+    // network so the UI is fully translated even when everything below fails.
+    _translations = await BundledTranslations.forLanguage(langCode);
+    notifyListeners();
+
     try {
       final dir = await getTemporaryDirectory();
       final dbLocal = '${dir.path}/database.json';
-      final langCode = Language.getLanguageCode();
       _actualPosition = await Geolocation.getCurrentLocation("country");
       _databaseData = await DatabaseData.loadDatabase(
         Config.DB_PATH,
@@ -108,6 +131,11 @@ class TipData with ChangeNotifier {
         _actualPosition,
         langCode,
       );
+      // Layer 3: the remote database corrects or extends the bundle.
+      final remote = _databaseData?.languageData?.translations;
+      if (remote != null && remote.isNotEmpty) {
+        _translations = {..._translations, ...remote};
+      }
       _geminiAPI = GeminiAPI(
         apiUrl: Config.GEMINI_API_URL,
         apiKey: Config.GEMINI_API_KEY,
@@ -124,12 +152,16 @@ class TipData with ChangeNotifier {
   }
 
   void setPeople(int newPeople) {
-    _people = newPeople;
+    _people = newPeople < 1 ? 1 : newPeople;
+    peopleController.text = _people.toString();
     notifyListeners();
   }
 
+  void incrementPeople() => setPeople(_people + 1);
+  void decrementPeople() => setPeople(_people - 1);
+
   void setTipPercent(int newPercent) {
-    _tipPercent = newPercent < 0 ? 0 : newPercent;
+    _tipPercent = newPercent.clamp(0, 100);
     notifyListeners();
   }
 
@@ -161,7 +193,7 @@ class TipData with ChangeNotifier {
 
   Person _newPerson(final int index) => Person(
     id: '${DateTime.now().microsecondsSinceEpoch}_$index',
-    name: '${translations['person'] ?? 'Person'} ${index + 1}',
+    name: '${t('person')} ${index + 1}',
   );
 
   void addPerson() {
@@ -279,13 +311,7 @@ class TipData with ChangeNotifier {
     }
   }
 
-  void incrementTipPorcent() {
-    _tipPercent++;
-    notifyListeners();
-  }
+  void incrementTipPorcent() => setTipPercent(_tipPercent + 1);
 
-  void decrementTipPorcent() {
-    _tipPercent--;
-    notifyListeners();
-  }
+  void decrementTipPorcent() => setTipPercent(_tipPercent - 1);
 }

@@ -3,27 +3,42 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tip_calculator/schemas/person.dart';
 import 'package:tip_calculator/service/tip_data.dart';
+import 'package:tip_calculator/theme/app_colors.dart';
+import 'package:tip_calculator/theme/app_theme.dart';
+import 'package:tip_calculator/total_widget.dart';
+import 'package:tip_calculator/widgets/ui.dart';
 
 /// "Split by items" screen: each person gets their own consumption, and the
 /// tip is spread in proportion to it.
+///
+/// The share bar is the point of the screen -- proportional tip is invisible
+/// in a column of numbers, so each person's slice of the bill is drawn.
 class MySplitScreen extends StatelessWidget {
   const MySplitScreen({super.key});
 
-  static String _text(
-    final Map<String, String> translations,
-    final String key,
-    final String fallback,
-  ) => translations[key] ?? fallback;
+  /// Rotates through the domain palette so people stay visually distinct.
+  static Color _avatarColor(final AppColors colors, final int index) {
+    const swatchCount = 4;
+    switch (index % swatchCount) {
+      case 0:
+        return colors.amount;
+      case 1:
+        return colors.people;
+      case 2:
+        return colors.tip;
+      default:
+        return colors.total;
+    }
+  }
 
   Future<void> _addItemDialog(
     final BuildContext context,
     final Person person,
-    final Map<String, String> translations,
   ) async {
     final tipData = context.read<TipData>();
     final result = await showDialog<_ItemDraft>(
       context: context,
-      builder: (dialogContext) => _AddItemDialog(translations: translations),
+      builder: (dialogContext) => const _AddItemDialog(),
     );
     if (result == null) return;
 
@@ -32,9 +47,7 @@ class MySplitScreen extends StatelessWidget {
     if (result.price > 0) {
       tipData.addItem(
         person.id,
-        result.label.isEmpty
-            ? _text(translations, 'item_label', 'Item')
-            : result.label,
+        result.label.isEmpty ? tipData.t('item_label') : result.label,
         result.price,
       );
     }
@@ -43,13 +56,11 @@ class MySplitScreen extends StatelessWidget {
   Future<void> _renameDialog(
     final BuildContext context,
     final Person person,
-    final Map<String, String> translations,
   ) async {
     final tipData = context.read<TipData>();
     final name = await showDialog<String>(
       context: context,
-      builder: (dialogContext) =>
-          _RenameDialog(translations: translations, initialName: person.name),
+      builder: (dialogContext) => _RenameDialog(initialName: person.name),
     );
     if (name != null && name.isNotEmpty) {
       tipData.renamePerson(person.id, name);
@@ -58,156 +69,211 @@ class MySplitScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TipData>(
-      builder: (context, tipData, child) {
-        final translations = tipData.translations;
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            title: Text(_text(translations, 'split_title', 'Split by items')),
-          ),
-          body: SafeArea(
-            child: Column(
-              children: [
-                _buildSummary(context, tipData, translations),
-                Expanded(
-                  child: tipData.persons.isEmpty
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Text(
-                              _text(
-                                translations,
-                                'split_empty',
-                                'Add the people sharing this bill.',
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        )
-                      : ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 80),
-                          itemCount: tipData.persons.length,
-                          itemBuilder: (context, index) => _buildPersonCard(
-                            context,
-                            tipData,
-                            tipData.persons[index],
-                            translations,
-                          ),
-                        ),
-                ),
-              ],
-            ),
-          ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => context.read<TipData>().addPerson(),
-            icon: const Icon(Icons.person_add_alt),
-            label: Text(_text(translations, 'person_add', 'Add person')),
-          ),
-        );
-      },
-    );
-  }
+    final colors = context.colors;
+    final tipData = context.watch<TipData>();
 
-  Widget _buildSummary(
-    final BuildContext context,
-    final TipData tipData,
-    final Map<String, String> translations,
-  ) {
-    final symbol = tipData.currencySymbol;
-    return Container(
-      width: double.infinity,
-      color: const Color.fromRGBO(255, 237, 94, 0.5),
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '${_text(translations, 'total_title', 'Total')}: '
-            '$symbol ${tipData.total.toStringAsFixed(2)}',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            '${_text(translations, 'tip_total', 'Tip')} '
-            '(${tipData.tipPercent}%): '
-            '$symbol ${tipData.tip.toStringAsFixed(2)}',
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(tipData.t('split_title')),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_add_alt),
+            tooltip: tipData.t('person_add'),
+            onPressed: () => context.read<TipData>().addPerson(),
           ),
         ],
       ),
+      body: SafeArea(
+        bottom: false,
+        child: tipData.persons.isEmpty
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Text(
+                    tipData.t('split_empty'),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: colors.ink2),
+                  ),
+                ),
+              )
+            : ListView.separated(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
+                itemCount: tipData.persons.length,
+                separatorBuilder: (context, index) => const SizedBox(height: 10),
+                itemBuilder: (context, index) => _PersonCard(
+                  person: tipData.persons[index],
+                  accent: _avatarColor(colors, index),
+                  onAddItem: () =>
+                      _addItemDialog(context, tipData.persons[index]),
+                  onRename: () => _renameDialog(context, tipData.persons[index]),
+                ),
+              ),
+      ),
+      bottomNavigationBar: const MyTotalWidget(showModeToggle: false),
     );
   }
+}
 
-  Widget _buildPersonCard(
-    final BuildContext context,
-    final TipData tipData,
-    final Person person,
-    final Map<String, String> translations,
-  ) {
+class _PersonCard extends StatelessWidget {
+  final Person person;
+  final Color accent;
+  final VoidCallback onAddItem;
+  final VoidCallback onRename;
+
+  const _PersonCard({
+    required this.person,
+    required this.accent,
+    required this.onAddItem,
+    required this.onRename,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final tipData = context.watch<TipData>();
     final symbol = tipData.currencySymbol;
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => _renameDialog(context, person, translations),
-                    child: Text(
-                      person.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+    final bill = tipData.amount;
+    final share = bill > 0 ? (person.subtotal / bill).clamp(0.0, 1.0) : 0.0;
+    final initial = person.name.trim().isEmpty
+        ? '?'
+        : person.name.trim().characters.first.toUpperCase();
+
+    return AppCard(
+      rail: accent,
+      padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
+                child: Text(
+                  initial,
+                  style: AppTheme.figure(
+                    size: 12,
+                    color: colors.surface,
+                    weight: FontWeight.w700,
+                    letterSpacing: 0,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: GestureDetector(
+                  onTap: onRename,
+                  behavior: HitTestBehavior.opaque,
+                  child: Text(
+                    person.name,
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w600,
+                      color: colors.ink,
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.person_remove_outlined),
-                  tooltip: _text(translations, 'person_remove', 'Remove'),
-                  onPressed: () => tipData.removePerson(person.id),
-                ),
-              ],
+              ),
+              Text(
+                '$symbol ${tipData.totalFor(person).toStringAsFixed(2)}',
+                style: AppTheme.figure(size: 15, color: colors.ink),
+              ),
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                iconSize: 18,
+                icon: const Icon(Icons.close),
+                color: colors.ink3,
+                tooltip: tipData.t('person_remove'),
+                onPressed: () =>
+                    context.read<TipData>().removePerson(person.id),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: share,
+              minHeight: 4,
+              backgroundColor: colors.sunk,
+              valueColor: AlwaysStoppedAnimation<Color>(accent),
             ),
-            for (final item in person.items)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Row(
-                  children: [
-                    Expanded(child: Text(item.label)),
-                    Text('$symbol ${item.price.toStringAsFixed(2)}'),
-                    IconButton(
-                      visualDensity: VisualDensity.compact,
-                      icon: const Icon(Icons.close, size: 18),
-                      onPressed: () => tipData.removeItem(person.id, item.id),
+          ),
+          const SizedBox(height: 8),
+          for (final item in person.items)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 3),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      item.label,
+                      style: TextStyle(fontSize: 12.5, color: colors.ink2),
                     ),
-                  ],
+                  ),
+                  Text(
+                    item.price.toStringAsFixed(2),
+                    style: AppTheme.figure(
+                      size: 12.5,
+                      color: colors.ink,
+                      weight: FontWeight.w500,
+                      letterSpacing: 0,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  InkWell(
+                    onTap: () =>
+                        context.read<TipData>().removeItem(person.id, item.id),
+                    borderRadius: BorderRadius.circular(4),
+                    child: Icon(Icons.close, size: 13, color: colors.ink3),
+                  ),
+                ],
+              ),
+            ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  tipData.t('tip_share'),
+                  style: TextStyle(fontSize: 12.5, color: colors.ink2),
                 ),
               ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton.icon(
-                icon: const Icon(Icons.add, size: 18),
-                label: Text(_text(translations, 'item_add', 'Add item')),
-                onPressed: () => _addItemDialog(context, person, translations),
+              Text(
+                tipData.tipFor(person).toStringAsFixed(2),
+                style: AppTheme.figure(
+                  size: 12.5,
+                  color: colors.ink2,
+                  weight: FontWeight.w500,
+                  letterSpacing: 0,
+                ),
               ),
+              const SizedBox(width: 17),
+            ],
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                visualDensity: VisualDensity.compact,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              icon: const Icon(Icons.add, size: 16),
+              label: Text(
+                tipData.t('item_add'),
+                style: const TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onPressed: onAddItem,
             ),
-            const Divider(height: 8),
-            Text(
-              '${_text(translations, 'tip_total', 'Tip')}: '
-              '$symbol ${tipData.tipFor(person).toStringAsFixed(2)}',
-              style: const TextStyle(fontSize: 12),
-            ),
-            Text(
-              '${_text(translations, 'total_title', 'Total')}: '
-              '$symbol ${tipData.totalFor(person).toStringAsFixed(2)}',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -226,8 +292,7 @@ class _ItemDraft {
 /// trap: the dialog is still running its exit animation at that point, so the
 /// fields rebuild against a disposed controller and the frame throws.
 class _AddItemDialog extends StatefulWidget {
-  final Map<String, String> translations;
-  const _AddItemDialog({required this.translations});
+  const _AddItemDialog();
 
   @override
   State<_AddItemDialog> createState() => _AddItemDialogState();
@@ -244,21 +309,17 @@ class _AddItemDialogState extends State<_AddItemDialog> {
     super.dispose();
   }
 
-  String _text(final String key, final String fallback) =>
-      widget.translations[key] ?? fallback;
-
   void _submit() {
     final price =
         double.tryParse(_priceController.text.replaceAll(',', '.')) ?? 0.00;
-    Navigator.of(
-      context,
-    ).pop(_ItemDraft(_labelController.text.trim(), price));
+    Navigator.of(context).pop(_ItemDraft(_labelController.text.trim(), price));
   }
 
   @override
   Widget build(BuildContext context) {
+    final tipData = context.read<TipData>();
     return AlertDialog(
-      title: Text(_text('item_add', 'Add item')),
+      title: Text(tipData.t('item_add')),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -267,10 +328,9 @@ class _AddItemDialogState extends State<_AddItemDialog> {
             autofocus: true,
             textCapitalization: TextCapitalization.sentences,
             textInputAction: TextInputAction.next,
-            decoration: InputDecoration(
-              labelText: _text('item_label', 'Item'),
-            ),
+            decoration: InputDecoration(labelText: tipData.t('item_label')),
           ),
+          const SizedBox(height: 10),
           TextField(
             controller: _priceController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -280,27 +340,24 @@ class _AddItemDialogState extends State<_AddItemDialog> {
               ),
             ],
             onSubmitted: (value) => _submit(),
-            decoration: InputDecoration(
-              labelText: _text('item_price', 'Price'),
-            ),
+            decoration: InputDecoration(labelText: tipData.t('item_price')),
           ),
         ],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(_text('cancel', 'Cancel')),
+          child: Text(tipData.t('cancel')),
         ),
-        TextButton(onPressed: _submit, child: Text(_text('add', 'Add'))),
+        TextButton(onPressed: _submit, child: Text(tipData.t('add'))),
       ],
     );
   }
 }
 
 class _RenameDialog extends StatefulWidget {
-  final Map<String, String> translations;
   final String initialName;
-  const _RenameDialog({required this.translations, required this.initialName});
+  const _RenameDialog({required this.initialName});
 
   @override
   State<_RenameDialog> createState() => _RenameDialogState();
@@ -317,16 +374,13 @@ class _RenameDialogState extends State<_RenameDialog> {
     super.dispose();
   }
 
-  String _text(final String key, final String fallback) =>
-      widget.translations[key] ?? fallback;
-
-  void _submit() =>
-      Navigator.of(context).pop(_nameController.text.trim());
+  void _submit() => Navigator.of(context).pop(_nameController.text.trim());
 
   @override
   Widget build(BuildContext context) {
+    final tipData = context.read<TipData>();
     return AlertDialog(
-      title: Text(_text('person_rename', 'Rename')),
+      title: Text(tipData.t('person_rename')),
       content: TextField(
         controller: _nameController,
         autofocus: true,
@@ -336,9 +390,9 @@ class _RenameDialogState extends State<_RenameDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(_text('cancel', 'Cancel')),
+          child: Text(tipData.t('cancel')),
         ),
-        TextButton(onPressed: _submit, child: Text(_text('save', 'Save'))),
+        TextButton(onPressed: _submit, child: Text(tipData.t('save'))),
       ],
     );
   }

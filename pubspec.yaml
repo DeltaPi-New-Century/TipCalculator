@@ -18,6 +18,7 @@ dependencies:
   flutter_dotenv: ^5.2.1
   cupertino_icons: ^1.0.8
   shared_preferences: ^2.5.3
+  share_plus: ^13.3.0
   # google_mobile_ads: ^5.2.0
 
 dev_dependencies:
@@ -30,6 +31,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/.env
+    # Bundled so a stale remote database can never leave half the UI in one
+    # language and half in another.
+    - resources/tipcalculator_languages.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:

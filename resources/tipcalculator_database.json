@@ -1,0 +1,2717 @@
+{
+ "version": "1.0.3",
+ "database": [
+  {
+   "continent": "Europe",
+   "country": "Albania",
+   "code": "ALB",
+   "currencies": {
+    "name": "ALL",
+    "symbol": "L"
+   },
+   "flags": {
+    "flag": "🇦🇱",
+    "localpng": "https://flagcdn.com/w320/al.png",
+    "webpng": "https://flagcdn.com/w320/al.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Algeria",
+   "code": "DZA",
+   "currencies": {
+    "name": "DZD",
+    "symbol": "د.ج"
+   },
+   "flags": {
+    "flag": "🇩🇿",
+    "localpng": "https://flagcdn.com/w320/dz.png",
+    "webpng": "https://flagcdn.com/w320/dz.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Andorra",
+   "code": "AND",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇦🇩",
+    "localpng": "https://flagcdn.com/w320/ad.png",
+    "webpng": "https://flagcdn.com/w320/ad.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Angola",
+   "code": "AGO",
+   "currencies": {
+    "name": "AOA",
+    "symbol": "Kz"
+   },
+   "flags": {
+    "flag": "🇦🇴",
+    "localpng": "https://flagcdn.com/w320/ao.png",
+    "webpng": "https://flagcdn.com/w320/ao.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Antigua and barbuda",
+   "code": "ATG",
+   "currencies": {
+    "name": "XCD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇦🇬",
+    "localpng": "https://flagcdn.com/w320/ag.png",
+    "webpng": "https://flagcdn.com/w320/ag.png"
+   }
+  },
+  {
+   "continent": "South america",
+   "country": "Argentina",
+   "code": "ARG",
+   "currencies": {
+    "name": "ARS",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇦🇷",
+    "localpng": "https://flagcdn.com/w320/ar.png",
+    "webpng": "https://flagcdn.com/w320/ar.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Armenia",
+   "code": "ARM",
+   "currencies": {
+    "name": "AMD",
+    "symbol": "֏"
+   },
+   "flags": {
+    "flag": "🇦🇲",
+    "localpng": "https://flagcdn.com/w320/am.png",
+    "webpng": "https://flagcdn.com/w320/am.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Australia",
+   "code": "AUS",
+   "currencies": {
+    "name": "AUD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇦🇺",
+    "localpng": "https://flagcdn.com/w320/au.png",
+    "webpng": "https://flagcdn.com/w320/au.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Austria",
+   "code": "AUT",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇦🇹",
+    "localpng": "https://flagcdn.com/w320/at.png",
+    "webpng": "https://flagcdn.com/w320/at.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Azerbaijan",
+   "code": "AZE",
+   "currencies": {
+    "name": "AZN",
+    "symbol": "₼"
+   },
+   "flags": {
+    "flag": "🇦🇿",
+    "localpng": "https://flagcdn.com/w320/az.png",
+    "webpng": "https://flagcdn.com/w320/az.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Bahamas",
+   "code": "BHS",
+   "currencies": {
+    "name": "BSD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇧🇸",
+    "localpng": "https://flagcdn.com/w320/bs.png",
+    "webpng": "https://flagcdn.com/w320/bs.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Bahrain",
+   "code": "BHR",
+   "currencies": {
+    "name": "BHD",
+    "symbol": ".د.ب"
+   },
+   "flags": {
+    "flag": "🇧🇭",
+    "localpng": "https://flagcdn.com/w320/bh.png",
+    "webpng": "https://flagcdn.com/w320/bh.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Bangladesh",
+   "code": "BGD",
+   "currencies": {
+    "name": "BDT",
+    "symbol": "৳"
+   },
+   "flags": {
+    "flag": "🇧🇩",
+    "localpng": "https://flagcdn.com/w320/bd.png",
+    "webpng": "https://flagcdn.com/w320/bd.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Barbados",
+   "code": "BRB",
+   "currencies": {
+    "name": "BBD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇧🇧",
+    "localpng": "https://flagcdn.com/w320/bb.png",
+    "webpng": "https://flagcdn.com/w320/bb.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Belarus",
+   "code": "BLR",
+   "currencies": {
+    "name": "BYN",
+    "symbol": "Br"
+   },
+   "flags": {
+    "flag": "🇧🇾",
+    "localpng": "https://flagcdn.com/w320/by.png",
+    "webpng": "https://flagcdn.com/w320/by.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Belgium",
+   "code": "BEL",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇧🇪",
+    "localpng": "https://flagcdn.com/w320/be.png",
+    "webpng": "https://flagcdn.com/w320/be.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Belize",
+   "code": "BLZ",
+   "currencies": {
+    "name": "BZD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇧🇿",
+    "localpng": "https://flagcdn.com/w320/bz.png",
+    "webpng": "https://flagcdn.com/w320/bz.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Benin",
+   "code": "BEN",
+   "currencies": {
+    "name": "XOF",
+    "symbol": "Fr"
+   },
+   "flags": {
+    "flag": "🇧🇯",
+    "localpng": "https://flagcdn.com/w320/bj.png",
+    "webpng": "https://flagcdn.com/w320/bj.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Bhutan",
+   "code": "BTN",
+   "currencies": {
+    "name": "BTN",
+    "symbol": "Nu."
+   },
+   "flags": {
+    "flag": "🇧🇹",
+    "localpng": "https://flagcdn.com/w320/bt.png",
+    "webpng": "https://flagcdn.com/w320/bt.png"
+   }
+  },
+  {
+   "continent": "South america",
+   "country": "Bolivia",
+   "code": "BOL",
+   "currencies": {
+    "name": "BOB",
+    "symbol": "Bs."
+   },
+   "flags": {
+    "flag": "🇧🇴",
+    "localpng": "https://flagcdn.com/w320/bo.png",
+    "webpng": "https://flagcdn.com/w320/bo.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Bosnia and herzegovina",
+   "code": "BIH",
+   "currencies": {
+    "name": "BAM",
+    "symbol": "KM"
+   },
+   "flags": {
+    "flag": "🇧🇦",
+    "localpng": "https://flagcdn.com/w320/ba.png",
+    "webpng": "https://flagcdn.com/w320/ba.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Botswana",
+   "code": "BWA",
+   "currencies": {
+    "name": "BWP",
+    "symbol": "P"
+   },
+   "flags": {
+    "flag": "🇧🇼",
+    "localpng": "https://flagcdn.com/w320/bw.png",
+    "webpng": "https://flagcdn.com/w320/bw.png"
+   }
+  },
+  {
+   "continent": "South america",
+   "country": "Brazil",
+   "code": "BRA",
+   "currencies": {
+    "name": "BRL",
+    "symbol": "R$"
+   },
+   "flags": {
+    "flag": "🇧🇷",
+    "localpng": "https://flagcdn.com/w320/br.png",
+    "webpng": "https://flagcdn.com/w320/br.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Brunei",
+   "code": "BRN",
+   "currencies": {
+    "name": "BND",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇧🇳",
+    "localpng": "https://flagcdn.com/w320/bn.png",
+    "webpng": "https://flagcdn.com/w320/bn.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Bulgaria",
+   "code": "BGR",
+   "currencies": {
+    "name": "BGN",
+    "symbol": "лв"
+   },
+   "flags": {
+    "flag": "🇧🇬",
+    "localpng": "https://flagcdn.com/w320/bg.png",
+    "webpng": "https://flagcdn.com/w320/bg.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Cambodia",
+   "code": "KHM",
+   "currencies": {
+    "name": "KHR",
+    "symbol": "៛"
+   },
+   "flags": {
+    "flag": "🇰🇭",
+    "localpng": "https://flagcdn.com/w320/kh.png",
+    "webpng": "https://flagcdn.com/w320/kh.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Cameroon",
+   "code": "CMR",
+   "currencies": {
+    "name": "XAF",
+    "symbol": "Fr"
+   },
+   "flags": {
+    "flag": "🇨🇲",
+    "localpng": "https://flagcdn.com/w320/cm.png",
+    "webpng": "https://flagcdn.com/w320/cm.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Canada",
+   "code": "CAN",
+   "currencies": {
+    "name": "CAD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇨🇦",
+    "localpng": "https://flagcdn.com/w320/ca.png",
+    "webpng": "https://flagcdn.com/w320/ca.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Cape verde",
+   "code": "CPV",
+   "currencies": {
+    "name": "CVE",
+    "symbol": "Esc"
+   },
+   "flags": {
+    "flag": "🇨🇻",
+    "localpng": "https://flagcdn.com/w320/cv.png",
+    "webpng": "https://flagcdn.com/w320/cv.png"
+   }
+  },
+  {
+   "continent": "South america",
+   "country": "Chile",
+   "code": "CHL",
+   "currencies": {
+    "name": "CLP",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇨🇱",
+    "localpng": "https://flagcdn.com/w320/cl.png",
+    "webpng": "https://flagcdn.com/w320/cl.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "China",
+   "code": "CHN",
+   "currencies": {
+    "name": "CNY",
+    "symbol": "¥"
+   },
+   "flags": {
+    "flag": "🇨🇳",
+    "localpng": "https://flagcdn.com/w320/cn.png",
+    "webpng": "https://flagcdn.com/w320/cn.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "China",
+   "code": "HKG",
+   "currencies": {
+    "name": "HKD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇭🇰",
+    "localpng": "https://flagcdn.com/w320/hk.png",
+    "webpng": "https://flagcdn.com/w320/hk.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "China",
+   "code": "TWN",
+   "currencies": {
+    "name": "TWD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇹🇼",
+    "localpng": "https://flagcdn.com/w320/tw.png",
+    "webpng": "https://flagcdn.com/w320/tw.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "China",
+   "code": "MAC",
+   "currencies": {
+    "name": "MOP",
+    "symbol": "P"
+   },
+   "flags": {
+    "flag": "🇲🇴",
+    "localpng": "https://flagcdn.com/w320/mo.png",
+    "webpng": "https://flagcdn.com/w320/mo.png"
+   }
+  },
+  {
+   "continent": "South america",
+   "country": "Colombia",
+   "code": "COL",
+   "currencies": {
+    "name": "COP",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇨🇴",
+    "localpng": "https://flagcdn.com/w320/co.png",
+    "webpng": "https://flagcdn.com/w320/co.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Congo",
+   "code": "COG",
+   "currencies": {
+    "name": "XAF",
+    "symbol": "Fr"
+   },
+   "flags": {
+    "flag": "🇨🇬",
+    "localpng": "https://flagcdn.com/w320/cg.png",
+    "webpng": "https://flagcdn.com/w320/cg.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Congo",
+   "code": "COD",
+   "currencies": {
+    "name": "CDF",
+    "symbol": "FC"
+   },
+   "flags": {
+    "flag": "🇨🇩",
+    "localpng": "https://flagcdn.com/w320/cd.png",
+    "webpng": "https://flagcdn.com/w320/cd.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Costa rica",
+   "code": "CRI",
+   "currencies": {
+    "name": "CRC",
+    "symbol": "₡"
+   },
+   "flags": {
+    "flag": "🇨🇷",
+    "localpng": "https://flagcdn.com/w320/cr.png",
+    "webpng": "https://flagcdn.com/w320/cr.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Ivory coast",
+   "code": "CIV",
+   "currencies": {
+    "name": "XOF",
+    "symbol": "Fr"
+   },
+   "flags": {
+    "flag": "🇨🇮",
+    "localpng": "https://flagcdn.com/w320/ci.png",
+    "webpng": "https://flagcdn.com/w320/ci.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Croatia",
+   "code": "HRV",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇭🇷",
+    "localpng": "https://flagcdn.com/w320/hr.png",
+    "webpng": "https://flagcdn.com/w320/hr.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Cuba",
+   "code": "CUB",
+   "currencies": {
+    "name": "CUC",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇨🇺",
+    "localpng": "https://flagcdn.com/w320/cu.png",
+    "webpng": "https://flagcdn.com/w320/cu.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Cyprus",
+   "code": "CYP",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇨🇾",
+    "localpng": "https://flagcdn.com/w320/cy.png",
+    "webpng": "https://flagcdn.com/w320/cy.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Czech republic",
+   "code": "CZE",
+   "currencies": {
+    "name": "CZK",
+    "symbol": "Kč"
+   },
+   "flags": {
+    "flag": "🇨🇿",
+    "localpng": "https://flagcdn.com/w320/cz.png",
+    "webpng": "https://flagcdn.com/w320/cz.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Denmark",
+   "code": "DNK",
+   "currencies": {
+    "name": "DKK",
+    "symbol": "kr"
+   },
+   "flags": {
+    "flag": "🇩🇰",
+    "localpng": "https://flagcdn.com/w320/dk.png",
+    "webpng": "https://flagcdn.com/w320/dk.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Djibouti",
+   "code": "DJI",
+   "currencies": {
+    "name": "DJF",
+    "symbol": "Fr"
+   },
+   "flags": {
+    "flag": "🇩🇯",
+    "localpng": "https://flagcdn.com/w320/dj.png",
+    "webpng": "https://flagcdn.com/w320/dj.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Dominica",
+   "code": "DOM",
+   "currencies": {
+    "name": "DOP",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇩🇴",
+    "localpng": "https://flagcdn.com/w320/do.png",
+    "webpng": "https://flagcdn.com/w320/do.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Dominica",
+   "code": "DMA",
+   "currencies": {
+    "name": "XCD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇩🇲",
+    "localpng": "https://flagcdn.com/w320/dm.png",
+    "webpng": "https://flagcdn.com/w320/dm.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Dominican republic",
+   "code": "DOM",
+   "currencies": {
+    "name": "DOP",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇩🇴",
+    "localpng": "https://flagcdn.com/w320/do.png",
+    "webpng": "https://flagcdn.com/w320/do.png"
+   }
+  },
+  {
+   "continent": "South america",
+   "country": "Ecuador",
+   "code": "ECU",
+   "currencies": {
+    "name": "USD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇪🇨",
+    "localpng": "https://flagcdn.com/w320/ec.png",
+    "webpng": "https://flagcdn.com/w320/ec.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Egypt",
+   "code": "EGY",
+   "currencies": {
+    "name": "EGP",
+    "symbol": "£"
+   },
+   "flags": {
+    "flag": "🇪🇬",
+    "localpng": "https://flagcdn.com/w320/eg.png",
+    "webpng": "https://flagcdn.com/w320/eg.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "El salvador",
+   "code": "SLV",
+   "currencies": {
+    "name": "USD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇸🇻",
+    "localpng": "https://flagcdn.com/w320/sv.png",
+    "webpng": "https://flagcdn.com/w320/sv.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "United kingdom",
+   "code": "GBR",
+   "currencies": {
+    "name": "GBP",
+    "symbol": "£"
+   },
+   "flags": {
+    "flag": "🇬🇧",
+    "localpng": "https://flagcdn.com/w320/gb.png",
+    "webpng": "https://flagcdn.com/w320/gb.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Equatorial guinea",
+   "code": "GNQ",
+   "currencies": {
+    "name": "XAF",
+    "symbol": "Fr"
+   },
+   "flags": {
+    "flag": "🇬🇶",
+    "localpng": "https://flagcdn.com/w320/gq.png",
+    "webpng": "https://flagcdn.com/w320/gq.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Eritrea",
+   "code": "ERI",
+   "currencies": {
+    "name": "ERN",
+    "symbol": "Nfk"
+   },
+   "flags": {
+    "flag": "🇪🇷",
+    "localpng": "https://flagcdn.com/w320/er.png",
+    "webpng": "https://flagcdn.com/w320/er.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Estonia",
+   "code": "EST",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇪🇪",
+    "localpng": "https://flagcdn.com/w320/ee.png",
+    "webpng": "https://flagcdn.com/w320/ee.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Ethiopia",
+   "code": "ETH",
+   "currencies": {
+    "name": "ETB",
+    "symbol": "Br"
+   },
+   "flags": {
+    "flag": "🇪🇹",
+    "localpng": "https://flagcdn.com/w320/et.png",
+    "webpng": "https://flagcdn.com/w320/et.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Fiji",
+   "code": "FJI",
+   "currencies": {
+    "name": "FJD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇫🇯",
+    "localpng": "https://flagcdn.com/w320/fj.png",
+    "webpng": "https://flagcdn.com/w320/fj.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Finland",
+   "code": "FIN",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇫🇮",
+    "localpng": "https://flagcdn.com/w320/fi.png",
+    "webpng": "https://flagcdn.com/w320/fi.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "France",
+   "code": "FRA",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇫🇷",
+    "localpng": "https://flagcdn.com/w320/fr.png",
+    "webpng": "https://flagcdn.com/w320/fr.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Gabon",
+   "code": "GAB",
+   "currencies": {
+    "name": "XAF",
+    "symbol": "Fr"
+   },
+   "flags": {
+    "flag": "🇬🇦",
+    "localpng": "https://flagcdn.com/w320/ga.png",
+    "webpng": "https://flagcdn.com/w320/ga.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Georgia",
+   "code": "SGS",
+   "currencies": {
+    "name": "GBP",
+    "symbol": "£"
+   },
+   "flags": {
+    "flag": "🇬🇸",
+    "localpng": "https://flagcdn.com/w320/gs.png",
+    "webpng": "https://flagcdn.com/w320/gs.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Georgia",
+   "code": "GEO",
+   "currencies": {
+    "name": "GEL",
+    "symbol": "₾"
+   },
+   "flags": {
+    "flag": "🇬🇪",
+    "localpng": "https://flagcdn.com/w320/ge.png",
+    "webpng": "https://flagcdn.com/w320/ge.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Germany",
+   "code": "DEU",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇩🇪",
+    "localpng": "https://flagcdn.com/w320/de.png",
+    "webpng": "https://flagcdn.com/w320/de.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Ghana",
+   "code": "GHA",
+   "currencies": {
+    "name": "GHS",
+    "symbol": "₵"
+   },
+   "flags": {
+    "flag": "🇬🇭",
+    "localpng": "https://flagcdn.com/w320/gh.png",
+    "webpng": "https://flagcdn.com/w320/gh.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Greece",
+   "code": "GRC",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇬🇷",
+    "localpng": "https://flagcdn.com/w320/gr.png",
+    "webpng": "https://flagcdn.com/w320/gr.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Grenada",
+   "code": "GRD",
+   "currencies": {
+    "name": "XCD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇬🇩",
+    "localpng": "https://flagcdn.com/w320/gd.png",
+    "webpng": "https://flagcdn.com/w320/gd.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Guatemala",
+   "code": "GTM",
+   "currencies": {
+    "name": "GTQ",
+    "symbol": "Q"
+   },
+   "flags": {
+    "flag": "🇬🇹",
+    "localpng": "https://flagcdn.com/w320/gt.png",
+    "webpng": "https://flagcdn.com/w320/gt.png"
+   }
+  },
+  {
+   "continent": "South america",
+   "country": "Guyana",
+   "code": "GUY",
+   "currencies": {
+    "name": "GYD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇬🇾",
+    "localpng": "https://flagcdn.com/w320/gy.png",
+    "webpng": "https://flagcdn.com/w320/gy.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Honduras",
+   "code": "HND",
+   "currencies": {
+    "name": "HNL",
+    "symbol": "L"
+   },
+   "flags": {
+    "flag": "🇭🇳",
+    "localpng": "https://flagcdn.com/w320/hn.png",
+    "webpng": "https://flagcdn.com/w320/hn.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Hungary",
+   "code": "HUN",
+   "currencies": {
+    "name": "HUF",
+    "symbol": "Ft"
+   },
+   "flags": {
+    "flag": "🇭🇺",
+    "localpng": "https://flagcdn.com/w320/hu.png",
+    "webpng": "https://flagcdn.com/w320/hu.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Iceland",
+   "code": "ISL",
+   "currencies": {
+    "name": "ISK",
+    "symbol": "kr"
+   },
+   "flags": {
+    "flag": "🇮🇸",
+    "localpng": "https://flagcdn.com/w320/is.png",
+    "webpng": "https://flagcdn.com/w320/is.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "India",
+   "code": "IOT",
+   "currencies": {
+    "name": "USD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇮🇴",
+    "localpng": "https://flagcdn.com/w320/io.png",
+    "webpng": "https://flagcdn.com/w320/io.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "India",
+   "code": "IND",
+   "currencies": {
+    "name": "INR",
+    "symbol": "₹"
+   },
+   "flags": {
+    "flag": "🇮🇳",
+    "localpng": "https://flagcdn.com/w320/in.png",
+    "webpng": "https://flagcdn.com/w320/in.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Indonesia",
+   "code": "IDN",
+   "currencies": {
+    "name": "IDR",
+    "symbol": "Rp"
+   },
+   "flags": {
+    "flag": "🇮🇩",
+    "localpng": "https://flagcdn.com/w320/id.png",
+    "webpng": "https://flagcdn.com/w320/id.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Iran",
+   "code": "IRN",
+   "currencies": {
+    "name": "IRR",
+    "symbol": "﷼"
+   },
+   "flags": {
+    "flag": "🇮🇷",
+    "localpng": "https://flagcdn.com/w320/ir.png",
+    "webpng": "https://flagcdn.com/w320/ir.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Iran",
+   "code": "COK",
+   "currencies": {
+    "name": "CKD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇨🇰",
+    "localpng": "https://flagcdn.com/w320/ck.png",
+    "webpng": "https://flagcdn.com/w320/ck.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Republic of ireland",
+   "code": "GBR",
+   "currencies": {
+    "name": "GBP",
+    "symbol": "£"
+   },
+   "flags": {
+    "flag": "🇬🇧",
+    "localpng": "https://flagcdn.com/w320/gb.png",
+    "webpng": "https://flagcdn.com/w320/gb.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Northern ireland",
+   "code": "IRL",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇮🇪",
+    "localpng": "https://flagcdn.com/w320/ie.png",
+    "webpng": "https://flagcdn.com/w320/ie.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Israel",
+   "code": "ISR",
+   "currencies": {
+    "name": "ILS",
+    "symbol": "₪"
+   },
+   "flags": {
+    "flag": "🇮🇱",
+    "localpng": "https://flagcdn.com/w320/il.png",
+    "webpng": "https://flagcdn.com/w320/il.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Italy",
+   "code": "ITA",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇮🇹",
+    "localpng": "https://flagcdn.com/w320/it.png",
+    "webpng": "https://flagcdn.com/w320/it.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Jamaica",
+   "code": "JAM",
+   "currencies": {
+    "name": "JMD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇯🇲",
+    "localpng": "https://flagcdn.com/w320/jm.png",
+    "webpng": "https://flagcdn.com/w320/jm.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Japan",
+   "code": "JPN",
+   "currencies": {
+    "name": "JPY",
+    "symbol": "¥"
+   },
+   "flags": {
+    "flag": "🇯🇵",
+    "localpng": "https://flagcdn.com/w320/jp.png",
+    "webpng": "https://flagcdn.com/w320/jp.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Jordan",
+   "code": "JOR",
+   "currencies": {
+    "name": "JOD",
+    "symbol": "د.ا"
+   },
+   "flags": {
+    "flag": "🇯🇴",
+    "localpng": "https://flagcdn.com/w320/jo.png",
+    "webpng": "https://flagcdn.com/w320/jo.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Kazakhstan",
+   "code": "KAZ",
+   "currencies": {
+    "name": "KZT",
+    "symbol": "₸"
+   },
+   "flags": {
+    "flag": "🇰🇿",
+    "localpng": "https://flagcdn.com/w320/kz.png",
+    "webpng": "https://flagcdn.com/w320/kz.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Kenya",
+   "code": "KEN",
+   "currencies": {
+    "name": "KES",
+    "symbol": "Sh"
+   },
+   "flags": {
+    "flag": "🇰🇪",
+    "localpng": "https://flagcdn.com/w320/ke.png",
+    "webpng": "https://flagcdn.com/w320/ke.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Kosovo",
+   "code": "UNK",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇽🇰",
+    "localpng": "https://flagcdn.com/w320/xk.png",
+    "webpng": "https://flagcdn.com/w320/xk.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Kuwait",
+   "code": "KWT",
+   "currencies": {
+    "name": "KWD",
+    "symbol": "د.ك"
+   },
+   "flags": {
+    "flag": "🇰🇼",
+    "localpng": "https://flagcdn.com/w320/kw.png",
+    "webpng": "https://flagcdn.com/w320/kw.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Laos",
+   "code": "LAO",
+   "currencies": {
+    "name": "LAK",
+    "symbol": "₭"
+   },
+   "flags": {
+    "flag": "🇱🇦",
+    "localpng": "https://flagcdn.com/w320/la.png",
+    "webpng": "https://flagcdn.com/w320/la.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Latvia",
+   "code": "LVA",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇱🇻",
+    "localpng": "https://flagcdn.com/w320/lv.png",
+    "webpng": "https://flagcdn.com/w320/lv.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Lebanon",
+   "code": "LBN",
+   "currencies": {
+    "name": "LBP",
+    "symbol": "ل.ل"
+   },
+   "flags": {
+    "flag": "🇱🇧",
+    "localpng": "https://flagcdn.com/w320/lb.png",
+    "webpng": "https://flagcdn.com/w320/lb.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Liechtenstein",
+   "code": "LIE",
+   "currencies": {
+    "name": "CHF",
+    "symbol": "Fr"
+   },
+   "flags": {
+    "flag": "🇱🇮",
+    "localpng": "https://flagcdn.com/w320/li.png",
+    "webpng": "https://flagcdn.com/w320/li.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Lithuania",
+   "code": "LTU",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇱🇹",
+    "localpng": "https://flagcdn.com/w320/lt.png",
+    "webpng": "https://flagcdn.com/w320/lt.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Luxembourg",
+   "code": "LUX",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇱🇺",
+    "localpng": "https://flagcdn.com/w320/lu.png",
+    "webpng": "https://flagcdn.com/w320/lu.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Macedonia",
+   "code": "MKD",
+   "currencies": {
+    "name": "MKD",
+    "symbol": "den"
+   },
+   "flags": {
+    "flag": "🇲🇰",
+    "localpng": "https://flagcdn.com/w320/mk.png",
+    "webpng": "https://flagcdn.com/w320/mk.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Madagascar",
+   "code": "MDG",
+   "currencies": {
+    "name": "MGA",
+    "symbol": "Ar"
+   },
+   "flags": {
+    "flag": "🇲🇬",
+    "localpng": "https://flagcdn.com/w320/mg.png",
+    "webpng": "https://flagcdn.com/w320/mg.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Malaysia",
+   "code": "MYS",
+   "currencies": {
+    "name": "MYR",
+    "symbol": "RM"
+   },
+   "flags": {
+    "flag": "🇲🇾",
+    "localpng": "https://flagcdn.com/w320/my.png",
+    "webpng": "https://flagcdn.com/w320/my.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Maldives",
+   "code": "MDV",
+   "currencies": {
+    "name": "MVR",
+    "symbol": ".ރ"
+   },
+   "flags": {
+    "flag": "🇲🇻",
+    "localpng": "https://flagcdn.com/w320/mv.png",
+    "webpng": "https://flagcdn.com/w320/mv.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Malta",
+   "code": "MLT",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇲🇹",
+    "localpng": "https://flagcdn.com/w320/mt.png",
+    "webpng": "https://flagcdn.com/w320/mt.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Marshall islands",
+   "code": "MHL",
+   "currencies": {
+    "name": "USD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇲🇭",
+    "localpng": "https://flagcdn.com/w320/mh.png",
+    "webpng": "https://flagcdn.com/w320/mh.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Mauritania",
+   "code": "MRT",
+   "currencies": {
+    "name": "MRU",
+    "symbol": "UM"
+   },
+   "flags": {
+    "flag": "🇲🇷",
+    "localpng": "https://flagcdn.com/w320/mr.png",
+    "webpng": "https://flagcdn.com/w320/mr.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Mauritius",
+   "code": "MUS",
+   "currencies": {
+    "name": "MUR",
+    "symbol": "₨"
+   },
+   "flags": {
+    "flag": "🇲🇺",
+    "localpng": "https://flagcdn.com/w320/mu.png",
+    "webpng": "https://flagcdn.com/w320/mu.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Mexico",
+   "code": "MEX",
+   "currencies": {
+    "name": "MXN",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇲🇽",
+    "localpng": "https://flagcdn.com/w320/mx.png",
+    "webpng": "https://flagcdn.com/w320/mx.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Moldova",
+   "code": "MDA",
+   "currencies": {
+    "name": "MDL",
+    "symbol": "L"
+   },
+   "flags": {
+    "flag": "🇲🇩",
+    "localpng": "https://flagcdn.com/w320/md.png",
+    "webpng": "https://flagcdn.com/w320/md.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Monaco",
+   "code": "MCO",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇲🇨",
+    "localpng": "https://flagcdn.com/w320/mc.png",
+    "webpng": "https://flagcdn.com/w320/mc.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Mongolia",
+   "code": "MNG",
+   "currencies": {
+    "name": "MNT",
+    "symbol": "₮"
+   },
+   "flags": {
+    "flag": "🇲🇳",
+    "localpng": "https://flagcdn.com/w320/mn.png",
+    "webpng": "https://flagcdn.com/w320/mn.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Montenegro",
+   "code": "MNE",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇲🇪",
+    "localpng": "https://flagcdn.com/w320/me.png",
+    "webpng": "https://flagcdn.com/w320/me.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Morocco",
+   "code": "MAR",
+   "currencies": {
+    "name": "MAD",
+    "symbol": "د.م."
+   },
+   "flags": {
+    "flag": "🇲🇦",
+    "localpng": "https://flagcdn.com/w320/ma.png",
+    "webpng": "https://flagcdn.com/w320/ma.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Myanmar",
+   "code": "MMR",
+   "currencies": {
+    "name": "MMK",
+    "symbol": "Ks"
+   },
+   "flags": {
+    "flag": "🇲🇲",
+    "localpng": "https://flagcdn.com/w320/mm.png",
+    "webpng": "https://flagcdn.com/w320/mm.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Namibia",
+   "code": "NAM",
+   "currencies": {
+    "name": "NAD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇳🇦",
+    "localpng": "https://flagcdn.com/w320/na.png",
+    "webpng": "https://flagcdn.com/w320/na.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Nepal",
+   "code": "NPL",
+   "currencies": {
+    "name": "NPR",
+    "symbol": "₨"
+   },
+   "flags": {
+    "flag": "🇳🇵",
+    "localpng": "https://flagcdn.com/w320/np.png",
+    "webpng": "https://flagcdn.com/w320/np.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Netherlands",
+   "code": "BES",
+   "currencies": {
+    "name": "USD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇧🇶",
+    "localpng": "https://flagcdn.com/w320/bq.png",
+    "webpng": "https://flagcdn.com/w320/bq.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Netherlands",
+   "code": "NLD",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇳🇱",
+    "localpng": "https://flagcdn.com/w320/nl.png",
+    "webpng": "https://flagcdn.com/w320/nl.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "New zealand",
+   "code": "NZL",
+   "currencies": {
+    "name": "NZD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇳🇿",
+    "localpng": "https://flagcdn.com/w320/nz.png",
+    "webpng": "https://flagcdn.com/w320/nz.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Nicaragua",
+   "code": "NIC",
+   "currencies": {
+    "name": "NIO",
+    "symbol": "C$"
+   },
+   "flags": {
+    "flag": "🇳🇮",
+    "localpng": "https://flagcdn.com/w320/ni.png",
+    "webpng": "https://flagcdn.com/w320/ni.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Nigeria",
+   "code": "NGA",
+   "currencies": {
+    "name": "NGN",
+    "symbol": "₦"
+   },
+   "flags": {
+    "flag": "🇳🇬",
+    "localpng": "https://flagcdn.com/w320/ng.png",
+    "webpng": "https://flagcdn.com/w320/ng.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Norway",
+   "code": "NOR",
+   "currencies": {
+    "name": "NOK",
+    "symbol": "kr"
+   },
+   "flags": {
+    "flag": "🇳🇴",
+    "localpng": "https://flagcdn.com/w320/no.png",
+    "webpng": "https://flagcdn.com/w320/no.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Oman",
+   "code": "OMN",
+   "currencies": {
+    "name": "OMR",
+    "symbol": "ر.ع."
+   },
+   "flags": {
+    "flag": "🇴🇲",
+    "localpng": "https://flagcdn.com/w320/om.png",
+    "webpng": "https://flagcdn.com/w320/om.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Oman",
+   "code": "ROU",
+   "currencies": {
+    "name": "RON",
+    "symbol": "lei"
+   },
+   "flags": {
+    "flag": "🇷🇴",
+    "localpng": "https://flagcdn.com/w320/ro.png",
+    "webpng": "https://flagcdn.com/w320/ro.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Pakistan",
+   "code": "PAK",
+   "currencies": {
+    "name": "PKR",
+    "symbol": "₨"
+   },
+   "flags": {
+    "flag": "🇵🇰",
+    "localpng": "https://flagcdn.com/w320/pk.png",
+    "webpng": "https://flagcdn.com/w320/pk.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Palestine",
+   "code": "PSE",
+   "currencies": {
+    "name": "EGP",
+    "symbol": "E£"
+   },
+   "flags": {
+    "flag": "🇵🇸",
+    "localpng": "https://flagcdn.com/w320/ps.png",
+    "webpng": "https://flagcdn.com/w320/ps.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Panama",
+   "code": "PAN",
+   "currencies": {
+    "name": "PAB",
+    "symbol": "B/."
+   },
+   "flags": {
+    "flag": "🇵🇦",
+    "localpng": "https://flagcdn.com/w320/pa.png",
+    "webpng": "https://flagcdn.com/w320/pa.png"
+   }
+  },
+  {
+   "continent": "South america",
+   "country": "Paraguay",
+   "code": "PRY",
+   "currencies": {
+    "name": "PYG",
+    "symbol": "₲"
+   },
+   "flags": {
+    "flag": "🇵🇾",
+    "localpng": "https://flagcdn.com/w320/py.png",
+    "webpng": "https://flagcdn.com/w320/py.png"
+   }
+  },
+  {
+   "continent": "South america",
+   "country": "Peru",
+   "code": "PER",
+   "currencies": {
+    "name": "PEN",
+    "symbol": "S/ "
+   },
+   "flags": {
+    "flag": "🇵🇪",
+    "localpng": "https://flagcdn.com/w320/pe.png",
+    "webpng": "https://flagcdn.com/w320/pe.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Philippines",
+   "code": "PHL",
+   "currencies": {
+    "name": "PHP",
+    "symbol": "₱"
+   },
+   "flags": {
+    "flag": "🇵🇭",
+    "localpng": "https://flagcdn.com/w320/ph.png",
+    "webpng": "https://flagcdn.com/w320/ph.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Poland",
+   "code": "POL",
+   "currencies": {
+    "name": "PLN",
+    "symbol": "zł"
+   },
+   "flags": {
+    "flag": "🇵🇱",
+    "localpng": "https://flagcdn.com/w320/pl.png",
+    "webpng": "https://flagcdn.com/w320/pl.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Portugal",
+   "code": "PRT",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇵🇹",
+    "localpng": "https://flagcdn.com/w320/pt.png",
+    "webpng": "https://flagcdn.com/w320/pt.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Qatar",
+   "code": "QAT",
+   "currencies": {
+    "name": "QAR",
+    "symbol": "ر.ق"
+   },
+   "flags": {
+    "flag": "🇶🇦",
+    "localpng": "https://flagcdn.com/w320/qa.png",
+    "webpng": "https://flagcdn.com/w320/qa.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Romania",
+   "code": "ROU",
+   "currencies": {
+    "name": "RON",
+    "symbol": "lei"
+   },
+   "flags": {
+    "flag": "🇷🇴",
+    "localpng": "https://flagcdn.com/w320/ro.png",
+    "webpng": "https://flagcdn.com/w320/ro.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Russia",
+   "code": "RUS",
+   "currencies": {
+    "name": "RUB",
+    "symbol": "₽"
+   },
+   "flags": {
+    "flag": "🇷🇺",
+    "localpng": "https://flagcdn.com/w320/ru.png",
+    "webpng": "https://flagcdn.com/w320/ru.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Saint kitts and nevis",
+   "code": "KNA",
+   "currencies": {
+    "name": "XCD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇰🇳",
+    "localpng": "https://flagcdn.com/w320/kn.png",
+    "webpng": "https://flagcdn.com/w320/kn.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Saint lucia",
+   "code": "LCA",
+   "currencies": {
+    "name": "XCD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇱🇨",
+    "localpng": "https://flagcdn.com/w320/lc.png",
+    "webpng": "https://flagcdn.com/w320/lc.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Saint vincent and the grenadines",
+   "code": "VCT",
+   "currencies": {
+    "name": "XCD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇻🇨",
+    "localpng": "https://flagcdn.com/w320/vc.png",
+    "webpng": "https://flagcdn.com/w320/vc.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Samoa",
+   "code": "ASM",
+   "currencies": {
+    "name": "USD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇦🇸",
+    "localpng": "https://flagcdn.com/w320/as.png",
+    "webpng": "https://flagcdn.com/w320/as.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Samoa",
+   "code": "WSM",
+   "currencies": {
+    "name": "WST",
+    "symbol": "T"
+   },
+   "flags": {
+    "flag": "🇼🇸",
+    "localpng": "https://flagcdn.com/w320/ws.png",
+    "webpng": "https://flagcdn.com/w320/ws.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "San marino",
+   "code": "SMR",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇸🇲",
+    "localpng": "https://flagcdn.com/w320/sm.png",
+    "webpng": "https://flagcdn.com/w320/sm.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Saudi arabia",
+   "code": "SAU",
+   "currencies": {
+    "name": "SAR",
+    "symbol": "ر.س"
+   },
+   "flags": {
+    "flag": "🇸🇦",
+    "localpng": "https://flagcdn.com/w320/sa.png",
+    "webpng": "https://flagcdn.com/w320/sa.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Senegal",
+   "code": "SEN",
+   "currencies": {
+    "name": "XOF",
+    "symbol": "Fr"
+   },
+   "flags": {
+    "flag": "🇸🇳",
+    "localpng": "https://flagcdn.com/w320/sn.png",
+    "webpng": "https://flagcdn.com/w320/sn.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Serbia",
+   "code": "SRB",
+   "currencies": {
+    "name": "RSD",
+    "symbol": "дин."
+   },
+   "flags": {
+    "flag": "🇷🇸",
+    "localpng": "https://flagcdn.com/w320/rs.png",
+    "webpng": "https://flagcdn.com/w320/rs.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Seychelles",
+   "code": "SYC",
+   "currencies": {
+    "name": "SCR",
+    "symbol": "₨"
+   },
+   "flags": {
+    "flag": "🇸🇨",
+    "localpng": "https://flagcdn.com/w320/sc.png",
+    "webpng": "https://flagcdn.com/w320/sc.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Singapore",
+   "code": "SGP",
+   "currencies": {
+    "name": "SGD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇸🇬",
+    "localpng": "https://flagcdn.com/w320/sg.png",
+    "webpng": "https://flagcdn.com/w320/sg.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Slovakia",
+   "code": "SVK",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇸🇰",
+    "localpng": "https://flagcdn.com/w320/sk.png",
+    "webpng": "https://flagcdn.com/w320/sk.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Slovenia",
+   "code": "SVN",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇸🇮",
+    "localpng": "https://flagcdn.com/w320/si.png",
+    "webpng": "https://flagcdn.com/w320/si.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "South africa",
+   "code": "ZAF",
+   "currencies": {
+    "name": "ZAR",
+    "symbol": "R"
+   },
+   "flags": {
+    "flag": "🇿🇦",
+    "localpng": "https://flagcdn.com/w320/za.png",
+    "webpng": "https://flagcdn.com/w320/za.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "South korea",
+   "code": "KOR",
+   "currencies": {
+    "name": "KRW",
+    "symbol": "₩"
+   },
+   "flags": {
+    "flag": "🇰🇷",
+    "localpng": "https://flagcdn.com/w320/kr.png",
+    "webpng": "https://flagcdn.com/w320/kr.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Spain",
+   "code": "ESP",
+   "currencies": {
+    "name": "EUR",
+    "symbol": "€"
+   },
+   "flags": {
+    "flag": "🇪🇸",
+    "localpng": "https://flagcdn.com/w320/es.png",
+    "webpng": "https://flagcdn.com/w320/es.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Sri lanka",
+   "code": "LKA",
+   "currencies": {
+    "name": "LKR",
+    "symbol": "Rs  රු"
+   },
+   "flags": {
+    "flag": "🇱🇰",
+    "localpng": "https://flagcdn.com/w320/lk.png",
+    "webpng": "https://flagcdn.com/w320/lk.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Swaziland",
+   "code": "SWZ",
+   "currencies": {
+    "name": "SZL",
+    "symbol": "L"
+   },
+   "flags": {
+    "flag": "🇸🇿",
+    "localpng": "https://flagcdn.com/w320/sz.png",
+    "webpng": "https://flagcdn.com/w320/sz.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Sweden",
+   "code": "SWE",
+   "currencies": {
+    "name": "SEK",
+    "symbol": "kr"
+   },
+   "flags": {
+    "flag": "🇸🇪",
+    "localpng": "https://flagcdn.com/w320/se.png",
+    "webpng": "https://flagcdn.com/w320/se.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Switzerland",
+   "code": "CHE",
+   "currencies": {
+    "name": "CHF",
+    "symbol": "Fr."
+   },
+   "flags": {
+    "flag": "🇨🇭",
+    "localpng": "https://flagcdn.com/w320/ch.png",
+    "webpng": "https://flagcdn.com/w320/ch.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Taiwan",
+   "code": "TWN",
+   "currencies": {
+    "name": "TWD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇹🇼",
+    "localpng": "https://flagcdn.com/w320/tw.png",
+    "webpng": "https://flagcdn.com/w320/tw.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Tajikistan",
+   "code": "TJK",
+   "currencies": {
+    "name": "TJS",
+    "symbol": "ЅМ"
+   },
+   "flags": {
+    "flag": "🇹🇯",
+    "localpng": "https://flagcdn.com/w320/tj.png",
+    "webpng": "https://flagcdn.com/w320/tj.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Tanzania",
+   "code": "TZA",
+   "currencies": {
+    "name": "TZS",
+    "symbol": "Sh"
+   },
+   "flags": {
+    "flag": "🇹🇿",
+    "localpng": "https://flagcdn.com/w320/tz.png",
+    "webpng": "https://flagcdn.com/w320/tz.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Thailand",
+   "code": "THA",
+   "currencies": {
+    "name": "THB",
+    "symbol": "฿"
+   },
+   "flags": {
+    "flag": "🇹🇭",
+    "localpng": "https://flagcdn.com/w320/th.png",
+    "webpng": "https://flagcdn.com/w320/th.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "The gambia",
+   "code": "GMB",
+   "currencies": {
+    "name": "GMD",
+    "symbol": "D"
+   },
+   "flags": {
+    "flag": "🇬🇲",
+    "localpng": "https://flagcdn.com/w320/gm.png",
+    "webpng": "https://flagcdn.com/w320/gm.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "Trinidad and tobago",
+   "code": "TTO",
+   "currencies": {
+    "name": "TTD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇹🇹",
+    "localpng": "https://flagcdn.com/w320/tt.png",
+    "webpng": "https://flagcdn.com/w320/tt.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Tunisia",
+   "code": "TUN",
+   "currencies": {
+    "name": "TND",
+    "symbol": "د.ت"
+   },
+   "flags": {
+    "flag": "🇹🇳",
+    "localpng": "https://flagcdn.com/w320/tn.png",
+    "webpng": "https://flagcdn.com/w320/tn.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Turkey",
+   "code": "TUR",
+   "currencies": {
+    "name": "TRY",
+    "symbol": "₺"
+   },
+   "flags": {
+    "flag": "🇹🇷",
+    "localpng": "https://flagcdn.com/w320/tr.png",
+    "webpng": "https://flagcdn.com/w320/tr.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Turkmenistan",
+   "code": "TKM",
+   "currencies": {
+    "name": "TMT",
+    "symbol": "m"
+   },
+   "flags": {
+    "flag": "🇹🇲",
+    "localpng": "https://flagcdn.com/w320/tm.png",
+    "webpng": "https://flagcdn.com/w320/tm.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Tuvalu",
+   "code": "TUV",
+   "currencies": {
+    "name": "AUD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇹🇻",
+    "localpng": "https://flagcdn.com/w320/tv.png",
+    "webpng": "https://flagcdn.com/w320/tv.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Uganda",
+   "code": "UGA",
+   "currencies": {
+    "name": "UGX",
+    "symbol": "Sh"
+   },
+   "flags": {
+    "flag": "🇺🇬",
+    "localpng": "https://flagcdn.com/w320/ug.png",
+    "webpng": "https://flagcdn.com/w320/ug.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "Ukraine",
+   "code": "UKR",
+   "currencies": {
+    "name": "UAH",
+    "symbol": "₴"
+   },
+   "flags": {
+    "flag": "🇺🇦",
+    "localpng": "https://flagcdn.com/w320/ua.png",
+    "webpng": "https://flagcdn.com/w320/ua.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "United arab emirates",
+   "code": "ARE",
+   "currencies": {
+    "name": "AED",
+    "symbol": "د.إ"
+   },
+   "flags": {
+    "flag": "🇦🇪",
+    "localpng": "https://flagcdn.com/w320/ae.png",
+    "webpng": "https://flagcdn.com/w320/ae.png"
+   }
+  },
+  {
+   "continent": "Europe",
+   "country": "United kingdom",
+   "code": "GBR",
+   "currencies": {
+    "name": "GBP",
+    "symbol": "£"
+   },
+   "flags": {
+    "flag": "🇬🇧",
+    "localpng": "https://flagcdn.com/w320/gb.png",
+    "webpng": "https://flagcdn.com/w320/gb.png"
+   }
+  },
+  {
+   "continent": "North america",
+   "country": "United states of america",
+   "code": "USA",
+   "currencies": {
+    "name": "USD",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇺🇸",
+    "localpng": "https://flagcdn.com/w320/us.png",
+    "webpng": "https://flagcdn.com/w320/us.png"
+   }
+  },
+  {
+   "continent": "South america",
+   "country": "Uruguay",
+   "code": "URY",
+   "currencies": {
+    "name": "UYU",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇺🇾",
+    "localpng": "https://flagcdn.com/w320/uy.png",
+    "webpng": "https://flagcdn.com/w320/uy.png"
+   }
+  },
+  {
+   "continent": "Middle east & central asia",
+   "country": "Uzbekistan",
+   "code": "UZB",
+   "currencies": {
+    "name": "UZS",
+    "symbol": "so'm"
+   },
+   "flags": {
+    "flag": "🇺🇿",
+    "localpng": "https://flagcdn.com/w320/uz.png",
+    "webpng": "https://flagcdn.com/w320/uz.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Vanuatu",
+   "code": "VUT",
+   "currencies": {
+    "name": "VUV",
+    "symbol": "Vt"
+   },
+   "flags": {
+    "flag": "🇻🇺",
+    "localpng": "https://flagcdn.com/w320/vu.png",
+    "webpng": "https://flagcdn.com/w320/vu.png"
+   }
+  },
+  {
+   "continent": "South america",
+   "country": "Venezuela",
+   "code": "VEN",
+   "currencies": {
+    "name": "VES",
+    "symbol": "Bs.S."
+   },
+   "flags": {
+    "flag": "🇻🇪",
+    "localpng": "https://flagcdn.com/w320/ve.png",
+    "webpng": "https://flagcdn.com/w320/ve.png"
+   }
+  },
+  {
+   "continent": "Rest of asia and oceania",
+   "country": "Vietnam",
+   "code": "VNM",
+   "currencies": {
+    "name": "VND",
+    "symbol": "₫"
+   },
+   "flags": {
+    "flag": "🇻🇳",
+    "localpng": "https://flagcdn.com/w320/vn.png",
+    "webpng": "https://flagcdn.com/w320/vn.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Zambia",
+   "code": "ZMB",
+   "currencies": {
+    "name": "ZMW",
+    "symbol": "ZK"
+   },
+   "flags": {
+    "flag": "🇿🇲",
+    "localpng": "https://flagcdn.com/w320/zm.png",
+    "webpng": "https://flagcdn.com/w320/zm.png"
+   }
+  },
+  {
+   "continent": "Africa ",
+   "country": "Zimbabwe",
+   "code": "ZWE",
+   "currencies": {
+    "name": "ZWL",
+    "symbol": "$"
+   },
+   "flags": {
+    "flag": "🇿🇼",
+    "localpng": "https://flagcdn.com/w320/zw.png",
+    "webpng": "https://flagcdn.com/w320/zw.png"
+   }
+  }
+ ],
+ "languages": [
+  {
+   "code": "es",
+   "elements": [
+    {
+     "app_title": "Calculadora de Propina"
+    },
+    {
+     "amount_title": "Monto"
+    },
+    {
+     "amount_input_text": "Ingrese valor"
+    },
+    {
+     "people_title": "Personas"
+    },
+    {
+     "people_input_text": "Ingrese valor"
+    },
+    {
+     "tip_title": "Propina"
+    },
+    {
+     "tip_total": "Total"
+    },
+    {
+     "tip_total_per_person": "Por Persona"
+    },
+    {
+     "tip_button_text": "Recomendado para $countryName"
+    },
+    {
+     "total_title": "Total"
+    },
+    {
+     "total_amount": "Monto"
+    },
+    {
+     "total_per_person": "Por Persona"
+    },
+    {
+     "cancel": "Cancelar"
+    },
+    {
+     "save": "Guardar"
+    },
+    {
+     "add": "Agregar"
+    },
+    {
+     "undo": "Deshacer"
+    },
+    {
+     "history_title": "Historial"
+    },
+    {
+     "history_save": "Guardar"
+    },
+    {
+     "history_saved": "Guardado en el historial"
+    },
+    {
+     "history_nothing_to_save": "Primero ingrese un monto"
+    },
+    {
+     "history_empty": "Aún no hay cálculos guardados."
+    },
+    {
+     "history_deleted": "Eliminado"
+    },
+    {
+     "history_clear": "Borrar"
+    },
+    {
+     "history_clear_title": "Borrar historial"
+    },
+    {
+     "history_clear_body": "Esto elimina todos los cálculos guardados. No se puede deshacer."
+    },
+    {
+     "split_title": "División por consumo"
+    },
+    {
+     "split_evenly": "En partes iguales"
+    },
+    {
+     "split_by_items": "Por consumo"
+    },
+    {
+     "split_manage": "Gestionar personas"
+    },
+    {
+     "split_empty": "Agregue las personas que comparten la cuenta."
+    },
+    {
+     "person": "Persona"
+    },
+    {
+     "person_add": "Agregar persona"
+    },
+    {
+     "person_remove": "Quitar"
+    },
+    {
+     "person_rename": "Renombrar"
+    },
+    {
+     "item_add": "Agregar ítem"
+    },
+    {
+     "item_label": "Ítem"
+    },
+    {
+     "item_price": "Precio"
+    },
+    {
+     "tip_share": "Parte de propina"
+    },
+    {
+     "theme_title": "Apariencia"
+    },
+    {
+     "theme_system": "Sistema"
+    },
+    {
+     "theme_light": "Claro"
+    },
+    {
+     "theme_dark": "Oscuro"
+    },
+    {
+     "history_today": "Hoy"
+    },
+    {
+     "history_yesterday": "Ayer"
+    },
+    {
+     "share": "Compartir"
+    },
+    {
+     "share_as_text": "Compartir como texto"
+    },
+    {
+     "share_as_text_hint": "Texto plano, funciona en todas partes"
+    },
+    {
+     "share_as_image": "Compartir como imagen"
+    },
+    {
+     "share_as_image_hint": "Una tarjeta para chats e historias"
+    },
+    {
+     "share_failed": "No se pudo compartir el resumen"
+    },
+    {
+     "share_bill": "Cuenta"
+    }
+   ]
+  },
+  {
+   "code": "en",
+   "elements": [
+    {
+     "app_title": "Tip Calculator"
+    },
+    {
+     "amount_title": "Amount"
+    },
+    {
+     "amount_input_text": "Enter value"
+    },
+    {
+     "people_title": "People"
+    },
+    {
+     "people_input_text": "Enter value"
+    },
+    {
+     "tip_title": "Tip"
+    },
+    {
+     "tip_total": "Total"
+    },
+    {
+     "tip_total_per_person": "Per Person"
+    },
+    {
+     "tip_button_text": "Recommended for $countryName"
+    },
+    {
+     "total_title": "Total"
+    },
+    {
+     "total_amount": "Amount"
+    },
+    {
+     "total_per_person": "Per Person"
+    },
+    {
+     "cancel": "Cancel"
+    },
+    {
+     "save": "Save"
+    },
+    {
+     "add": "Add"
+    },
+    {
+     "undo": "Undo"
+    },
+    {
+     "history_title": "History"
+    },
+    {
+     "history_save": "Save"
+    },
+    {
+     "history_saved": "Saved to history"
+    },
+    {
+     "history_nothing_to_save": "Enter an amount first"
+    },
+    {
+     "history_empty": "No saved calculations yet."
+    },
+    {
+     "history_deleted": "Deleted"
+    },
+    {
+     "history_clear": "Clear"
+    },
+    {
+     "history_clear_title": "Clear history"
+    },
+    {
+     "history_clear_body": "This deletes every saved calculation. It cannot be undone."
+    },
+    {
+     "split_title": "Itemized split"
+    },
+    {
+     "split_evenly": "Evenly"
+    },
+    {
+     "split_by_items": "Itemized"
+    },
+    {
+     "split_manage": "Manage people"
+    },
+    {
+     "split_empty": "Add the people sharing this bill."
+    },
+    {
+     "person": "Person"
+    },
+    {
+     "person_add": "Add person"
+    },
+    {
+     "person_remove": "Remove"
+    },
+    {
+     "person_rename": "Rename"
+    },
+    {
+     "item_add": "Add item"
+    },
+    {
+     "item_label": "Item"
+    },
+    {
+     "item_price": "Price"
+    },
+    {
+     "tip_share": "Tip share"
+    },
+    {
+     "theme_title": "Appearance"
+    },
+    {
+     "theme_system": "System"
+    },
+    {
+     "theme_light": "Light"
+    },
+    {
+     "theme_dark": "Dark"
+    },
+    {
+     "history_today": "Today"
+    },
+    {
+     "history_yesterday": "Yesterday"
+    },
+    {
+     "share": "Share"
+    },
+    {
+     "share_as_text": "Share as text"
+    },
+    {
+     "share_as_text_hint": "Plain text, works everywhere"
+    },
+    {
+     "share_as_image": "Share as image"
+    },
+    {
+     "share_as_image_hint": "A receipt card for chats and stories"
+    },
+    {
+     "share_failed": "Could not share the summary"
+    },
+    {
+     "share_bill": "Bill"
+    }
+   ]
+  }
+ ]
+}
