@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -59,5 +56,16 @@ class DefaultFirebaseOptions {
     projectId: 'tipcalculator-a7607',
     databaseURL: 'https://tipcalculator-a7607-default-rtdb.firebaseio.com',
     storageBucket: 'tipcalculator-a7607.firebasestorage.app',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCC1Fz613HrsuZE0uwCx_gkDh_Dkav-GPE',
+    appId: '1:175553083642:web:3266d1450e47edbbf03143',
+    messagingSenderId: '175553083642',
+    projectId: 'tipcalculator-a7607',
+    authDomain: 'tipcalculator-a7607.firebaseapp.com',
+    databaseURL: 'https://tipcalculator-a7607-default-rtdb.firebaseio.com',
+    storageBucket: 'tipcalculator-a7607.firebasestorage.app',
+    measurementId: 'G-FXLXZTTDFJ',
   );
 }

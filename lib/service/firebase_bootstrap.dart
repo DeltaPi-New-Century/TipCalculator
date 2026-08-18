@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tip_calculator/firebase_options.dart';
 import 'package:tip_calculator/service/auth_service.dart';
+import 'package:tip_calculator/service/config.dart';
 
 /// Brings Firebase up at startup, without ever being able to stop the app.
 ///
@@ -54,7 +55,19 @@ class FirebaseBootstrap {
   /// Debug builds use the debug provider, which prints a token that has to be
   /// registered once per machine under App Check > Apps > Manage debug tokens.
   /// Release builds use Play Integrity, which needs no manual step.
+  ///
+  /// The web has no attestation equivalent, so it uses reCAPTCHA v3 with the
+  /// site key from [Config.recaptchaSiteKey]. With no key there is nothing to
+  /// activate, and activating anyway is worse than not activating at all --
+  /// see above -- so the whole call is skipped.
   static Future<void> _activateAppCheck() async {
+    if (kIsWeb && Config.recaptchaSiteKey.isEmpty) {
+      debugPrint(
+        'No RECAPTCHA_SITE_KEY defined; skipping App Check on web. '
+        'Pass --dart-define=RECAPTCHA_SITE_KEY=... to enable it.',
+      );
+      return;
+    }
     try {
       await FirebaseAppCheck.instance.activate(
         providerAndroid: kDebugMode
@@ -63,6 +76,7 @@ class FirebaseBootstrap {
         providerApple: kDebugMode
             ? const AppleDebugProvider()
             : const AppleAppAttestWithDeviceCheckFallbackProvider(),
+        providerWeb: ReCaptchaV3Provider(Config.recaptchaSiteKey),
       );
     } catch (error) {
       // Leaving App Check inactive still lets unenforced services work; it is

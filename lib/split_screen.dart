@@ -5,6 +5,7 @@ import 'package:tip_calculator/schemas/person.dart';
 import 'package:tip_calculator/service/auth_service.dart';
 import 'package:tip_calculator/service/session_data.dart';
 import 'package:tip_calculator/service/tip_data.dart';
+import 'package:tip_calculator/session_screen.dart';
 import 'package:tip_calculator/theme/app_colors.dart';
 import 'package:tip_calculator/theme/app_theme.dart';
 import 'package:tip_calculator/total_widget.dart';
@@ -98,6 +99,16 @@ class MySplitScreen extends StatelessWidget {
               icon: const Icon(Icons.person_add_alt),
               tooltip: tipData.t('person_add'),
               onPressed: () => context.read<TipData>().addPerson(),
+            )
+          else
+            // The code, the member list and leaving all live one screen away;
+            // without this the only route back to them is the back button.
+            IconButton(
+              icon: const Icon(Icons.link),
+              tooltip: tipData.t('session_title'),
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const MySessionScreen()),
+              ),
             ),
         ],
       ),
