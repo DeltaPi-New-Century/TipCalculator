@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tip_calculator/schemas/person.dart';
+import 'package:tip_calculator/service/auth_service.dart';
+import 'package:tip_calculator/service/session_data.dart';
 import 'package:tip_calculator/service/tip_data.dart';
 import 'package:tip_calculator/theme/app_colors.dart';
 import 'package:tip_calculator/theme/app_theme.dart';
@@ -36,6 +38,7 @@ class MySplitScreen extends StatelessWidget {
     final Person person,
   ) async {
     final tipData = context.read<TipData>();
+    final session = context.read<SessionData>();
     final result = await showDialog<_ItemDraft>(
       context: context,
       builder: (dialogContext) => const _AddItemDialog(),
@@ -45,25 +48,37 @@ class MySplitScreen extends StatelessWidget {
     // An unnamed item is still a valid line on the bill; a zero price is not
     // worth storing.
     if (result.price > 0) {
-      tipData.addItem(
-        person.id,
-        result.label.isEmpty ? tipData.t('item_label') : result.label,
-        result.price,
-      );
+      final label =
+          result.label.isEmpty ? tipData.t('item_label') : result.label;
+      // During a session the server owns the list; writing locally would be
+      // overwritten by the next snapshot.
+      if (session.isActive) {
+        await session.addItem(label, result.price);
+      } else {
+        tipData.addItem(person.id, label, result.price);
+      }
     }
   }
 
   Future<void> _renameDialog(
     final BuildContext context,
-    final Person person,
-  ) async {
+    final Person person, {
+    required final bool isSelf,
+  }) async {
     final tipData = context.read<TipData>();
+    final session = context.read<SessionData>();
     final name = await showDialog<String>(
       context: context,
       builder: (dialogContext) => _RenameDialog(initialName: person.name),
     );
     if (name != null && name.isNotEmpty) {
-      tipData.renamePerson(person.id, name);
+      if (session.isActive) {
+        await session.rename(name);
+      } else {
+        tipData.renamePerson(person.id, name);
+      }
+      // Renaming your own seat teaches the app what to call you next time.
+      if (isSelf) await tipData.setOwnerName(name);
     }
   }
 
@@ -76,11 +91,14 @@ class MySplitScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(tipData.t('split_title')),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.person_add_alt),
-            tooltip: tipData.t('person_add'),
-            onPressed: () => context.read<TipData>().addPerson(),
-          ),
+          // Membership comes from people joining with the code, not from the
+          // host inventing rows.
+          if (!context.watch<SessionData>().isActive)
+            IconButton(
+              icon: const Icon(Icons.person_add_alt),
+              tooltip: tipData.t('person_add'),
+              onPressed: () => context.read<TipData>().addPerson(),
+            ),
         ],
       ),
       body: SafeArea(
@@ -105,7 +123,13 @@ class MySplitScreen extends StatelessWidget {
                   accent: _avatarColor(colors, index),
                   onAddItem: () =>
                       _addItemDialog(context, tipData.persons[index]),
-                  onRename: () => _renameDialog(context, tipData.persons[index]),
+                  onRename: () => _renameDialog(
+                    context,
+                    tipData.persons[index],
+                    isSelf: tipData.isSessionActive
+                        ? tipData.persons[index].id == AuthService.uid
+                        : index == 0,
+                  ),
                 ),
               ),
       ),
@@ -131,6 +155,11 @@ class _PersonCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final tipData = context.watch<TipData>();
+    final session = context.watch<SessionData>();
+    // In a session a person's row is theirs alone: the rules reject writes to
+    // anyone else's items, so the UI must not offer them either.
+    final mine = !session.isActive || person.id == AuthService.uid;
+    final locked = session.isActive && !mine;
     final symbol = tipData.currencySymbol;
     final bill = tipData.amount;
     final share = bill > 0 ? (person.subtotal / bill).clamp(0.0, 1.0) : 0.0;
@@ -165,7 +194,7 @@ class _PersonCard extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: GestureDetector(
-                  onTap: onRename,
+                  onTap: mine ? onRename : null,
                   behavior: HitTestBehavior.opaque,
                   child: Text(
                     person.name,
@@ -181,15 +210,16 @@ class _PersonCard extends StatelessWidget {
                 '$symbol ${tipData.totalFor(person).toStringAsFixed(2)}',
                 style: AppTheme.figure(size: 15, color: colors.ink),
               ),
-              IconButton(
-                visualDensity: VisualDensity.compact,
-                iconSize: 18,
-                icon: const Icon(Icons.close),
-                color: colors.ink3,
-                tooltip: tipData.t('person_remove'),
-                onPressed: () =>
-                    context.read<TipData>().removePerson(person.id),
-              ),
+              if (!session.isActive)
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  iconSize: 18,
+                  icon: const Icon(Icons.close),
+                  color: colors.ink3,
+                  tooltip: tipData.t('person_remove'),
+                  onPressed: () =>
+                      context.read<TipData>().removePerson(person.id),
+                ),
             ],
           ),
           const SizedBox(height: 8),
@@ -224,12 +254,19 @@ class _PersonCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  InkWell(
-                    onTap: () =>
-                        context.read<TipData>().removeItem(person.id, item.id),
-                    borderRadius: BorderRadius.circular(4),
-                    child: Icon(Icons.close, size: 13, color: colors.ink3),
-                  ),
+                  if (mine)
+                    InkWell(
+                      onTap: () => session.isActive
+                          ? session.removeItem(item.id)
+                          : context.read<TipData>().removeItem(
+                              person.id,
+                              item.id,
+                            ),
+                      borderRadius: BorderRadius.circular(4),
+                      child: Icon(Icons.close, size: 13, color: colors.ink3),
+                    )
+                  else
+                    const SizedBox(width: 13),
                 ],
               ),
             ),
@@ -253,9 +290,10 @@ class _PersonCard extends StatelessWidget {
               const SizedBox(width: 17),
             ],
           ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton.icon(
+          if (!locked)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 visualDensity: VisualDensity.compact,
@@ -270,9 +308,9 @@ class _PersonCard extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              onPressed: onAddItem,
+                onPressed: onAddItem,
+              ),
             ),
-          ),
         ],
       ),
     );

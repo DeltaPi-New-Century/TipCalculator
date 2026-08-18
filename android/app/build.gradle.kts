@@ -3,6 +3,9 @@ import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
+    // START: FlutterFire Configuration
+    id("com.google.gms.google-services")
+    // END: FlutterFire Configuration
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
@@ -36,6 +39,8 @@ android {
         applicationId = "com.pesta.TipsCalculatorByBattousai"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
+        // Pinned explicitly: Firebase Auth requires API 23+, so this must not
+        // silently follow the local Flutter SDK's default downwards.
         minSdk = flutter.minSdkVersion
         // Android 16. Required by Google Play from 2026-10-31.
         targetSdk = 36

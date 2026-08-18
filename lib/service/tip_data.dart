@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:tip_calculator/schemas/tip.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tip_calculator/schemas/person.dart';
+import 'package:tip_calculator/schemas/tip.dart';
+import 'package:tip_calculator/service/tip_advisor.dart';
+import 'package:tip_calculator/service/firebase_bootstrap.dart';
 import 'package:tip_calculator/schemas/history_entry.dart';
 import 'package:tip_calculator/service/config.dart';
-import 'package:tip_calculator/service/gemini.dart';
 import 'package:tip_calculator/service/database.dart';
 import 'package:tip_calculator/service/language.dart';
 import 'package:tip_calculator/service/geolocation.dart';
@@ -19,14 +21,31 @@ import 'package:tip_calculator/service/bundled_translations.dart';
 enum SplitMode { evenly, byItems }
 
 class TipData with ChangeNotifier {
+  static const String _ownerNameKey = 'owner_name';
+
   DatabaseData? _databaseData;
-  GeminiAPI? _geminiAPI;
-  TipPorcentData? _recommendedTip;
   double _amount = 0.00;
   int _people = 1, _tipPercent = 0;
   String _actualPosition = "";
   SplitMode _splitMode = SplitMode.evenly;
   final List<Person> _persons = [];
+
+  /// People coming from a live shared session, when one is joined.
+  ///
+  /// Non-null takes precedence over [_persons]: during a session the table is
+  /// whatever the server says, and local edits go through SessionService
+  /// rather than mutating this list.
+  List<Person>? _sessionPersons;
+  bool _tipLocked = false;
+
+  /// What to call the person holding this phone.
+  ///
+  /// Persisted so "Person 1" only ever appears once: after the first time the
+  /// user types their name -- renaming themselves in the split, or joining a
+  /// session -- every future bill starts with it already filled in.
+  String _ownerName = '';
+  TipAdvice? _tipAdvice;
+  bool _isFetchingAdvice = false;
 
   /// Starts as the English defaults so the very first frame is never blank,
   /// then is replaced wholesale as each layer resolves.
@@ -57,18 +76,82 @@ class TipData with ChangeNotifier {
       (_databaseData != null && _databaseData!.countryData != null)
       ? _databaseData!.countryData!.country
       : "";
-  String get recommendedTip =>
-      ((_recommendedTip != null) ? _recommendedTip!.message : "");
+  /// Whether AI tip advice can be offered.
+  ///
+  /// Requires both a working Firebase connection and a known country. When
+  /// false the UI hides the suggestion entirely rather than showing a control
+  /// that cannot do anything.
+  bool get hasTipAdvice =>
+      FirebaseBootstrap.isReady && _actualPosition.isNotEmpty;
+
+  /// The fetched advice, or null before the first successful lookup.
+  TipAdvice? get tipAdvice => _tipAdvice;
+
+  /// True while a lookup is in flight, so the UI can show progress instead of
+  /// appearing to ignore the tap.
+  bool get isFetchingAdvice => _isFetchingAdvice;
+
   int get tipPercent => _tipPercent;
   SplitMode get splitMode => _splitMode;
   bool get isSplitByItems => _splitMode == SplitMode.byItems;
-  List<Person> get persons => List.unmodifiable(_persons);
+  List<Person> get persons =>
+      List.unmodifiable(_sessionPersons ?? _persons);
+
+  /// True while a shared session is driving the people list.
+  bool get isSessionActive => _sessionPersons != null;
+
+  /// True when the tip percentage is controlled by someone else -- the host of
+  /// a session this device only joined.
+  bool get isTipLocked => _tipLocked;
+
+  /// The phone owner's name, or empty if they have never given one.
+  String get ownerName => _ownerName;
+
+  /// Remembers what the user calls themselves, for every future bill.
+  Future<void> setOwnerName(final String name) async {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty || trimmed == _ownerName) return;
+    _ownerName = trimmed;
+    notifyListeners();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_ownerNameKey, trimmed);
+    } catch (error) {
+      // Still applies for this session; only persistence failed.
+      debugPrint('Could not persist owner name: $error');
+    }
+  }
+
+  /// Replaces the table with the live session's people, or releases it.
+  ///
+  /// Passing null hands control back to the local list, leaving whatever the
+  /// user had before the session untouched.
+  void setSessionPersons(final List<Person>? people) {
+    _sessionPersons = people;
+    if (people != null) _splitMode = SplitMode.byItems;
+    notifyListeners();
+  }
+
+  /// Applies the tip percentage a session host has chosen.
+  void applySessionTip(final int percent, {required final bool locked}) {
+    _tipLocked = locked;
+    if (_tipPercent != percent) {
+      _tipPercent = percent.clamp(0, 100);
+    }
+    notifyListeners();
+  }
+
+  void releaseTipLock() {
+    if (!_tipLocked) return;
+    _tipLocked = false;
+    notifyListeners();
+  }
 
   /// In [SplitMode.byItems] the head count and the bill are derived from the
   /// people list, so the manual amount/people fields are ignored.
-  int get people => isSplitByItems ? _persons.length : _people;
+  int get people => isSplitByItems ? persons.length : _people;
   double get amount => isSplitByItems
-      ? _persons.fold(0.00, (sum, person) => sum + person.subtotal)
+      ? persons.fold(0.00, (sum, person) => sum + person.subtotal)
       : _amount;
 
   double get tip => (amount * (_tipPercent / 100));
@@ -81,7 +164,7 @@ class TipData with ChangeNotifier {
   /// not-yet-filled-in people still shows sane numbers.
   double tipFor(final Person person) {
     if (amount <= 0) {
-      return (_persons.isEmpty) ? 0.00 : tip / _persons.length;
+      return (persons.isEmpty) ? 0.00 : tip / persons.length;
     }
     return tip * (person.subtotal / amount);
   }
@@ -116,6 +199,13 @@ class TipData with ChangeNotifier {
     // built-in defaults.
     final langCode = Language.getLanguageCode();
 
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _ownerName = prefs.getString(_ownerNameKey) ?? '';
+    } catch (error) {
+      debugPrint('Could not read owner name: $error');
+    }
+
     // Layer 2: the bundled asset. Loaded first and independently of the
     // network so the UI is fully translated even when everything below fails.
     _translations = await BundledTranslations.forLanguage(langCode);
@@ -126,7 +216,7 @@ class TipData with ChangeNotifier {
       final dbLocal = '${dir.path}/database.json';
       _actualPosition = await Geolocation.getCurrentLocation("country");
       _databaseData = await DatabaseData.loadDatabase(
-        Config.DB_PATH,
+        Config.dbPath,
         dbLocal,
         _actualPosition,
         langCode,
@@ -136,10 +226,6 @@ class TipData with ChangeNotifier {
       if (remote != null && remote.isNotEmpty) {
         _translations = {..._translations, ...remote};
       }
-      _geminiAPI = GeminiAPI(
-        apiUrl: Config.GEMINI_API_URL,
-        apiKey: Config.GEMINI_API_KEY,
-      );
     } catch (error) {
       debugPrint('TipData initialization failed, using defaults: $error');
     }
@@ -161,6 +247,8 @@ class TipData with ChangeNotifier {
   void decrementPeople() => setPeople(_people - 1);
 
   void setTipPercent(int newPercent) {
+    // A guest cannot move the tip: the host owns it for the whole table.
+    if (_tipLocked) return;
     _tipPercent = newPercent.clamp(0, 100);
     notifyListeners();
   }
@@ -191,9 +279,13 @@ class TipData with ChangeNotifier {
     notifyListeners();
   }
 
+  /// The first seat belongs to whoever owns the phone, so it gets their name
+  /// when we know it rather than a placeholder they have to correct.
   Person _newPerson(final int index) => Person(
     id: '${DateTime.now().microsecondsSinceEpoch}_$index',
-    name: '${t('person')} ${index + 1}',
+    name: (index == 0 && _ownerName.isNotEmpty)
+        ? _ownerName
+        : '${t('person')} ${index + 1}',
   );
 
   void addPerson() {
@@ -300,15 +392,26 @@ class TipData with ChangeNotifier {
     notifyListeners();
   }
 
-  void getRecommendedTip() async {
-    if (_geminiAPI != null && _actualPosition.isNotEmpty) {
-      _recommendedTip = await _geminiAPI!.generateContent(
-        country: _actualPosition,
-        type: "waiter",
-      );
-      _tipPercent = _recommendedTip!.avgVal.toInt();
-      notifyListeners();
+  /// Fetches the customary tip for the detected country and applies the
+  /// average as the current percentage.
+  ///
+  /// Silent on failure by design: the user keeps whatever they had, and the
+  /// suggestion row simply does not update.
+  Future<void> fetchTipAdvice() async {
+    if (!hasTipAdvice || _isFetchingAdvice) return;
+
+    _isFetchingAdvice = true;
+    notifyListeners();
+
+    final advice = await TipAdvisor.forCountry(_actualPosition);
+
+    _isFetchingAdvice = false;
+    if (advice != null) {
+      _tipAdvice = advice;
+      setTipPercent(advice.avgVal);
+      return;
     }
+    notifyListeners();
   }
 
   void incrementTipPorcent() => setTipPercent(_tipPercent + 1);

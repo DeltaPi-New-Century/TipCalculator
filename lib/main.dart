@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tip_calculator/service/tip_data.dart';
 import 'package:tip_calculator/service/history_data.dart';
 import 'package:tip_calculator/service/settings_data.dart';
+import 'package:tip_calculator/service/firebase_bootstrap.dart';
 import 'package:tip_calculator/history_screen.dart';
 import 'package:tip_calculator/amount_widget.dart';
 import 'package:tip_calculator/people_widget.dart';
@@ -14,12 +14,13 @@ import 'package:tip_calculator/theme/app_theme.dart';
 import 'package:tip_calculator/widgets/theme_sheet.dart';
 import 'package:tip_calculator/widgets/manage_people_button.dart';
 import 'package:tip_calculator/widgets/share_sheet.dart';
+import 'package:tip_calculator/service/session_data.dart';
 
 Future main() async {
-  // Binding must be initialized before any plugin/asset access (dotenv reads
-  // from the asset bundle). Newer Flutter versions assert on the wrong order.
+  // Binding must be initialized before any plugin or asset access.
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: "assets/.env");
+  // Never fatal: the calculator is fully usable without a backend.
+  await FirebaseBootstrap.initialize();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
     MultiProvider(
@@ -27,6 +28,11 @@ Future main() async {
         ChangeNotifierProvider(create: (_) => TipData()),
         ChangeNotifierProvider(create: (_) => HistoryData()),
         ChangeNotifierProvider(create: (_) => SettingsData()),
+        // Depends on TipData: session updates are pushed straight into the
+        // calculator, so the tip maths never learns Firebase exists.
+        ChangeNotifierProvider(
+          create: (context) => SessionData(context.read<TipData>()),
+        ),
       ],
       child: const MyApp(),
     ),

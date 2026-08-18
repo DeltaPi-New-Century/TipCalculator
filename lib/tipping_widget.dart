@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tip_calculator/service/session_data.dart';
 import 'package:tip_calculator/service/tip_data.dart';
 import 'package:tip_calculator/theme/app_colors.dart';
 import 'package:tip_calculator/theme/app_theme.dart';
@@ -19,6 +20,9 @@ class MyTippingWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final tipData = context.watch<TipData>();
+    // Guests in a session see the host's tip and cannot move it: one bill,
+    // one percentage.
+    final locked = tipData.isTipLocked;
     final symbol = tipData.currencySymbol;
 
     return AppCard(
@@ -34,12 +38,12 @@ class MyTippingWidget extends StatelessWidget {
                 value: '${tipData.tipPercent}%',
                 decrementLabel: tipData.t('tip_title'),
                 incrementLabel: tipData.t('tip_title'),
-                onDecrement: tipData.tipPercent <= 0
+                onDecrement: (locked || tipData.tipPercent <= 0)
                     ? null
-                    : () => context.read<TipData>().decrementTipPorcent(),
-                onIncrement: tipData.tipPercent >= 100
+                    : () => _setTip(context, tipData.tipPercent - 1),
+                onIncrement: (locked || tipData.tipPercent >= 100)
                     ? null
-                    : () => context.read<TipData>().incrementTipPorcent(),
+                    : () => _setTip(context, tipData.tipPercent + 1),
               ),
             ],
           ),
@@ -52,6 +56,7 @@ class MyTippingWidget extends StatelessWidget {
                 _PresetChip(
                   percent: preset,
                   selected: tipData.tipPercent == preset,
+                  enabled: !locked,
                 ),
             ],
           ),
@@ -66,9 +71,16 @@ class MyTippingWidget extends StatelessWidget {
               letterSpacing: 0,
             ),
           ),
-          if (tipData.countryName.isNotEmpty) ...[
+          if (locked) ...[
+            const SizedBox(height: 8),
+            Text(
+              tipData.t('session_tip_locked'),
+              style: TextStyle(fontSize: 11.5, color: colors.ink3),
+            ),
+          ],
+          if (!locked && tipData.hasTipAdvice) ...[
             const SizedBox(height: 10),
-            _SuggestionRow(),
+            const _SuggestionRow(),
           ],
         ],
       ),
@@ -76,11 +88,23 @@ class MyTippingWidget extends StatelessWidget {
   }
 }
 
+/// Applies a tip percentage locally, and mirrors it to the table when this
+/// device is hosting a session.
+void _setTip(final BuildContext context, final int percent) {
+  context.read<TipData>().setTipPercent(percent);
+  context.read<SessionData>().updateTip(percent);
+}
+
 class _PresetChip extends StatelessWidget {
   final int percent;
   final bool selected;
+  final bool enabled;
 
-  const _PresetChip({required this.percent, required this.selected});
+  const _PresetChip({
+    required this.percent,
+    required this.selected,
+    required this.enabled,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +116,7 @@ class _PresetChip extends StatelessWidget {
       ),
       child: InkWell(
         customBorder: const StadiumBorder(),
-        onTap: () => context.read<TipData>().setTipPercent(percent),
+        onTap: enabled ? () => _setTip(context, percent) : null,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           child: Text(
@@ -109,32 +133,50 @@ class _PresetChip extends StatelessWidget {
   }
 }
 
-/// The Gemini recommendation. Tappable to fetch, quiet until it has something
-/// to say.
+/// Country-specific tipping advice, fetched through Firebase AI Logic.
+///
+/// Tap to fetch; once an answer arrives it shows the customary range and the
+/// tip percentage has already been set to the average.
 class _SuggestionRow extends StatelessWidget {
+  const _SuggestionRow();
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final tipData = context.watch<TipData>();
-    final hasAdvice = tipData.recommendedTip.isNotEmpty;
-    final label = hasAdvice
-        ? tipData.recommendedTip
-        : tipData
-              .t('tip_button_text')
-              .replaceAll('\$countryName', tipData.countryName);
+
+    // Deliberately constant: the label stays "Recommended for <country>" even
+    // after an answer arrives. The result is visible where it matters -- the
+    // percentage and the selected preset chip both update -- so rewriting the
+    // control's own text would only make it harder to tap again.
+    final label = tipData
+        .t('tip_button_text')
+        .replaceAll('\$countryName', tipData.countryName);
 
     return Material(
       color: colors.sunk,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
-        onTap: () => context.read<TipData>().getRecommendedTip(),
+        onTap: tipData.isFetchingAdvice
+            ? null
+            : () => context.read<TipData>().fetchTipAdvice(),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(Icons.auto_awesome, size: 14, color: colors.tip),
+              if (tipData.isFetchingAdvice)
+                SizedBox(
+                  width: 14,
+                  height: 14,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: colors.tip,
+                  ),
+                )
+              else
+                Icon(Icons.auto_awesome, size: 14, color: colors.tip),
               const SizedBox(width: 7),
               Expanded(
                 child: Text(

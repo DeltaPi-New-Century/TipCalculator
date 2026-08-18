@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:tip_calculator/service/session_data.dart';
 import 'package:tip_calculator/service/tip_data.dart';
 import 'package:tip_calculator/split_screen.dart';
 import 'package:tip_calculator/theme/app_theme.dart';
 
 void main() {
-  Widget wrap(final TipData tipData) => ChangeNotifierProvider<TipData>.value(
-    value: tipData,
+  Widget wrap(final TipData tipData) => MultiProvider(
+    providers: [
+      ChangeNotifierProvider<TipData>.value(value: tipData),
+      ChangeNotifierProvider<SessionData>(
+        create: (context) => SessionData(tipData),
+      ),
+    ],
     child: MaterialApp(
       theme: AppTheme.light(),
       home: const MySplitScreen(),
