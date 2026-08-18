@@ -33,6 +33,8 @@ class MySessionScreen extends StatelessWidget {
         return tipData.t('session_error_not_owner');
       case SessionError.connectionLimit:
         return tipData.t('session_error_limit');
+      case SessionError.denied:
+        return tipData.t('session_error_denied');
       case SessionError.notSignedIn:
         return tipData.t('session_error_signin');
       case SessionError.network:

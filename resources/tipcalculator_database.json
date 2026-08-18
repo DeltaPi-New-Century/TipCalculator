@@ -2629,6 +2629,9 @@
      "session_error_limit": "Demasiadas sesiones ahora, intente en un momento"
     },
     {
+     "session_error_denied": "La sesión rechazó este dispositivo"
+    },
+    {
      "session_error_network": "Sin conexión con la sesión"
     },
     {
@@ -2866,6 +2869,9 @@
     },
     {
      "session_error_limit": "Too many sessions right now, try again shortly"
+    },
+    {
+     "session_error_denied": "The session refused this device"
     },
     {
      "session_error_network": "No connection to the session"

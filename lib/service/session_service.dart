@@ -13,6 +13,7 @@ enum SessionError {
   notOwner,
   invalidCode,
   connectionLimit,
+  denied,
   network,
 }
 
@@ -263,7 +264,10 @@ class SessionService {
     // is indistinguishable from a button that never fired.
     debugPrint('Session operation failed: $error');
     final text = error.toString().toLowerCase();
-    if (text.contains('permission')) return SessionError.closed;
+    // Deliberately NOT reported as "closed": a rules rejection and a finished
+    // session are different problems, and conflating them sent everyone
+    // looking at the host's screen instead of at the rules.
+    if (text.contains('permission')) return SessionError.denied;
     // The Spark plan caps simultaneous connections; at peak this is the
     // failure users will actually hit, and it must not look like a crash.
     if (text.contains('maxretries') || text.contains('disconnect')) {

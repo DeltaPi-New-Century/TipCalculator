@@ -100,6 +100,7 @@ const Map<String, String> kDefaultTranslations = {
   "session_error_invalid_code": "Check the code and try again",
   "session_error_not_owner": "Only the host can close the session",
   "session_error_limit": "Too many sessions right now, try again shortly",
+  "session_error_denied": "The session refused this device",
   "session_error_network": "No connection to the session",
   "session_error_signin": "Shared sessions are unavailable right now",
 };
