@@ -140,6 +140,47 @@ class SessionService {
     }
   }
 
+  /// Re-enters a session this device is already a member of, without writing.
+  ///
+  /// Distinct from [join] on purpose. [join] adds a member and refreshes
+  /// `joinedAt`; this only checks the session is still worth reattaching to.
+  /// Resuming must not resurrect a membership the user deliberately left, and
+  /// must not reorder the table just because someone reopened the app.
+  ///
+  /// A closed session still resumes: the members need to reach it to save
+  /// their copy, which is the whole point of the closed state.
+  static Future<SessionResult> resume(final String code) async {
+    final uid = AuthService.uid;
+    if (uid == null) return const SessionResult.failure(SessionError.notSignedIn);
+    if (!SessionCode.isValid(code)) {
+      return const SessionResult.failure(SessionError.invalidCode);
+    }
+
+    try {
+      final snapshot = await _sessionRef(code).get();
+      if (!snapshot.exists) {
+        return const SessionResult.failure(SessionError.notFound);
+      }
+
+      final session = Session.fromSnapshot(code, snapshot.value);
+      if (session == null) {
+        return const SessionResult.failure(SessionError.notFound);
+      }
+      if (session.isExpired) {
+        return const SessionResult.failure(SessionError.expired);
+      }
+      // Membership is the authorisation to resume. Someone who left, or whose
+      // row the host removed, has to be let back in the front door.
+      final stillAMember = session.members.any((member) => member.uid == uid);
+      if (!stillAMember) {
+        return const SessionResult.failure(SessionError.notFound);
+      }
+      return SessionResult.success(session);
+    } catch (error) {
+      return SessionResult.failure(_classify(error));
+    }
+  }
+
   /// Live view of a session, emitting null when it is deleted or unreadable.
   static Stream<Session?> watch(final String code) => _sessionRef(code)
       .onValue
@@ -173,6 +214,114 @@ class SessionService {
       await _sessionRef(code).child('items/$itemId').remove();
     } catch (error) {
       debugPrint('Could not remove item: $error');
+    }
+  }
+
+  /// Reassigns an item to another member. Host only.
+  ///
+  /// Exists for the case the rules cannot repair on their own: a guest loses
+  /// their identity -- private window closed, site data cleared, phone
+  /// reinstalled -- and comes back as a new uid. Their old items are stranded
+  /// on a member nobody can act as, and only the host can write to another
+  /// member's items. Without this the table has to start over.
+  ///
+  /// Permission comes from the session-level `.write` in the rules, which
+  /// cascades to items; the `uid` validator is what allows the new owner to be
+  /// someone other than the writer, and it requires the target to be a member
+  /// of this session.
+  static Future<bool> transferItem({
+    required final String code,
+    required final String itemId,
+    required final String toUid,
+  }) async {
+    try {
+      await _sessionRef(code).child('items/$itemId/uid').set(toUid);
+      return true;
+    } catch (error) {
+      debugPrint('Could not transfer item: $error');
+      return false;
+    }
+  }
+
+  /// Reassigns several items at once. Host only.
+  ///
+  /// One multi-path update rather than a write per item: the table is watching
+  /// this node live, and moving six items in six writes would show everyone
+  /// the bill rearranging itself piece by piece. This lands as a single
+  /// snapshot, and either all of it applies or none does.
+  static Future<bool> transferItems({
+    required final String code,
+    required final Iterable<String> itemIds,
+    required final String toUid,
+  }) async {
+    if (itemIds.isEmpty) return true;
+    try {
+      await _sessionRef(code).update({
+        for (final id in itemIds) 'items/$id/uid': toUid,
+      });
+      return true;
+    } catch (error) {
+      debugPrint('Could not transfer items: $error');
+      return false;
+    }
+  }
+
+  /// Deletes several items outright. Host only.
+  ///
+  /// The counterpart to [transferItems] for the case where the spending was
+  /// never real -- a duplicate, or a row left by a guest who is no longer at
+  /// the table and whose items belong to nobody.
+  ///
+  /// A guest deleting their own items goes through [removeItem]; this exists
+  /// because the rules only let the owner touch somebody else's.
+  static Future<bool> removeItems({
+    required final String code,
+    required final Iterable<String> itemIds,
+  }) async {
+    if (itemIds.isEmpty) return true;
+    try {
+      // Null in a multi-path update is a delete, so this is one atomic write
+      // rather than the bill shrinking a row at a time on everyone's screen.
+      await _sessionRef(code).update({
+        for (final id in itemIds) 'items/$id': null,
+      });
+      return true;
+    } catch (error) {
+      debugPrint('Could not remove items: $error');
+      return false;
+    }
+  }
+
+  /// Removes someone else from the table. Host only.
+  ///
+  /// Refuses while they still have items. Their rows would be left pointing at
+  /// a uid that is no longer a member, and the item validator requires the
+  /// owner to be one -- so the bill would still show the spending, with nobody
+  /// able to edit it. Move the items first; [transferItems] is that step.
+  ///
+  /// The host cannot remove themselves: the session is identified by its
+  /// owner, and an ownerless node is unreachable for everyone.
+  static Future<SessionError?> removeMember({
+    required final String code,
+    required final String uid,
+  }) async {
+    final actor = AuthService.uid;
+    if (actor == null) return SessionError.notSignedIn;
+    if (uid == actor) return SessionError.notOwner;
+
+    try {
+      final snapshot = await _sessionRef(code).get();
+      final session = Session.fromSnapshot(code, snapshot.value);
+      if (session == null) return SessionError.notFound;
+      if (!session.isOwnedBy(actor)) return SessionError.notOwner;
+
+      final itemsLeft = session.items.any((item) => item.uid == uid);
+      if (itemsLeft) return SessionError.denied;
+
+      await _sessionRef(code).child('members/$uid').remove();
+      return null;
+    } catch (error) {
+      return _classify(error);
     }
   }
 

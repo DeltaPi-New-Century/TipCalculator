@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tip_calculator/schemas/person.dart';
+import 'package:tip_calculator/schemas/session.dart';
 import 'package:tip_calculator/service/auth_service.dart';
 import 'package:tip_calculator/service/session_data.dart';
 import 'package:tip_calculator/service/tip_data.dart';
@@ -162,6 +163,185 @@ class _PersonCard extends StatelessWidget {
     required this.onRename,
   });
 
+  /// Moves some or all of a person's items onto another member.
+  ///
+  /// Covers the single-item case too, so the quick swap on each row and this
+  /// are the same operation at different scales.
+  Future<void> _moveItemsDialog(
+    final BuildContext context,
+    final Person from,
+  ) async {
+    final tipData = context.read<TipData>();
+    final session = context.read<SessionData>();
+    final messenger = ScaffoldMessenger.of(context);
+    final targets = session.members
+        .where((member) => member.uid != from.id)
+        .toList();
+    if (targets.isEmpty || from.items.isEmpty) {
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text(tipData.t('session_move_none'))),
+        );
+      return;
+    }
+
+    final request = await showDialog<_MoveRequest>(
+      context: context,
+      builder: (_) => _MoveItemsDialog(
+        person: from,
+        targets: targets,
+        title: tipData.t('session_move_items'),
+        action: tipData.t('session_move_confirm'),
+      ),
+    );
+    if (request == null || !context.mounted) return;
+
+    final target = targets.firstWhere((m) => m.uid == request.toUid);
+    final confirmed = await _confirm(
+      context,
+      title: tipData.t('session_move_items'),
+      body: '${request.itemIds.length} → ${target.name}',
+      action: tipData.t('session_move_confirm'),
+    );
+    if (!confirmed) return;
+
+    final ok = await session.transferItems(
+      itemIds: request.itemIds,
+      toUid: request.toUid!,
+    );
+    if (ok) return;
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(tipData.t('session_move_failed'))),
+      );
+  }
+
+  /// Deletes some or all of another person's items.
+  ///
+  /// The rules only let the host write to someone else's items, so this is the
+  /// only way to clear spending left behind by a guest who is gone.
+  Future<void> _removeItemsDialog(
+    final BuildContext context,
+    final Person from,
+  ) async {
+    final tipData = context.read<TipData>();
+    final session = context.read<SessionData>();
+    final messenger = ScaffoldMessenger.of(context);
+    if (from.items.isEmpty) {
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text(tipData.t('session_move_none'))),
+        );
+      return;
+    }
+
+    final request = await showDialog<_MoveRequest>(
+      context: context,
+      builder: (_) => _MoveItemsDialog(
+        person: from,
+        // No destination: an empty target list is what makes this a delete.
+        targets: const [],
+        title: tipData.t('session_remove_items'),
+        action: tipData.t('session_remove_items_confirm'),
+      ),
+    );
+    if (request == null || !context.mounted) return;
+
+    final confirmed = await _confirm(
+      context,
+      title: tipData.t('session_remove_items'),
+      body: '${request.itemIds.length} · ${from.name}',
+      action: tipData.t('session_remove_items_confirm'),
+      destructive: true,
+    );
+    if (!confirmed) return;
+
+    final ok = await session.removeItems(request.itemIds);
+    if (ok) return;
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(tipData.t('session_remove_items_failed'))),
+      );
+  }
+
+  /// Removes a member, once their spending is somebody else's.
+  Future<void> _removeMemberDialog(
+    final BuildContext context,
+    final Person person,
+  ) async {
+    final tipData = context.read<TipData>();
+    final session = context.read<SessionData>();
+    final messenger = ScaffoldMessenger.of(context);
+
+    // Checked before asking: refusing after a confirmation would be a worse
+    // way to say the same thing.
+    if (session.itemsOf(person.id).isNotEmpty) {
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(tipData.t('session_remove_member_has_items')),
+          ),
+        );
+      return;
+    }
+
+    final confirmed = await _confirm(
+      context,
+      title: '${tipData.t('session_remove_member')}: ${person.name}',
+      body: tipData.t('session_remove_member_confirm'),
+      action: tipData.t('session_remove_member'),
+      destructive: true,
+    );
+    if (!confirmed) return;
+
+    final error = await session.removeMember(person.id);
+    if (error == null) return;
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(tipData.t('session_remove_member_failed'))),
+      );
+  }
+
+  /// Shared yes/no gate for the host's destructive actions.
+  Future<bool> _confirm(
+    final BuildContext context, {
+    required final String title,
+    required final String body,
+    required final String action,
+    final bool destructive = false,
+  }) async {
+    final tipData = context.read<TipData>();
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(title),
+        content: Text(body),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(tipData.t('cancel')),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: destructive
+                ? TextButton.styleFrom(
+                    foregroundColor: dialogContext.colors.tip,
+                  )
+                : null,
+            child: Text(action),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -230,6 +410,35 @@ class _PersonCard extends StatelessWidget {
                   tooltip: tipData.t('person_remove'),
                   onPressed: () =>
                       context.read<TipData>().removePerson(person.id),
+                )
+              // The host's repair menu, for the cases the rules cannot fix on
+              // their own: a guest who came back as a new identity, leaving
+              // their old row stranded with items on it.
+              else if (session.isHost && person.id != AuthService.uid)
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.more_vert, size: 18, color: colors.ink3),
+                  tooltip: tipData.t('session_title'),
+                  itemBuilder: (_) => [
+                    PopupMenuItem(
+                      value: 'move',
+                      enabled: person.items.isNotEmpty,
+                      child: Text(tipData.t('session_move_items')),
+                    ),
+                    PopupMenuItem(
+                      value: 'removeItems',
+                      enabled: person.items.isNotEmpty,
+                      child: Text(tipData.t('session_remove_items')),
+                    ),
+                    PopupMenuItem(
+                      value: 'remove',
+                      child: Text(tipData.t('session_remove_member')),
+                    ),
+                  ],
+                  onSelected: (value) => switch (value) {
+                    'move' => _moveItemsDialog(context, person),
+                    'removeItems' => _removeItemsDialog(context, person),
+                    _ => _removeMemberDialog(context, person),
+                  },
                 ),
             ],
           ),
@@ -442,6 +651,134 @@ class _RenameDialogState extends State<_RenameDialog> {
           child: Text(tipData.t('cancel')),
         ),
         TextButton(onPressed: _submit, child: Text(tipData.t('save'))),
+      ],
+    );
+  }
+}
+
+/// What the host chose in [_MoveItemsDialog].
+///
+/// [toUid] is null when the dialog was opened to delete rather than move.
+class _MoveRequest {
+  final List<String> itemIds;
+  final String? toUid;
+
+  const _MoveRequest(this.itemIds, this.toUid);
+}
+
+/// Pick which of one person's items to act on, and -- when moving -- who gets
+/// them.
+///
+/// Everything starts selected: the common case is a guest who lost their
+/// identity and needs their whole tab moved onto the row they came back as.
+/// Unticking is for the rarer correction of a single item.
+///
+/// An empty [targets] turns this into a delete picker: no destination to
+/// choose, so the dropdown is not drawn.
+class _MoveItemsDialog extends StatefulWidget {
+  final Person person;
+  final List<SessionMember> targets;
+  final String title;
+  final String action;
+
+  const _MoveItemsDialog({
+    required this.person,
+    required this.targets,
+    required this.title,
+    required this.action,
+  });
+
+  @override
+  State<_MoveItemsDialog> createState() => _MoveItemsDialogState();
+}
+
+class _MoveItemsDialogState extends State<_MoveItemsDialog> {
+  late final Set<String> _selected = {
+    for (final item in widget.person.items) item.id,
+  };
+  late String? _toUid = widget.targets.isEmpty
+      ? null
+      : widget.targets.first.uid;
+
+  @override
+  Widget build(BuildContext context) {
+    final tipData = context.watch<TipData>();
+    final allSelected = _selected.length == widget.person.items.length;
+
+    return AlertDialog(
+      title: Text(widget.title),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            CheckboxListTile(
+              dense: true,
+              value: allSelected,
+              title: Text(tipData.t('session_move_select_all')),
+              onChanged: (value) => setState(() {
+                _selected
+                  ..clear()
+                  ..addAll(
+                    value == true
+                        ? widget.person.items.map((item) => item.id)
+                        : const <String>[],
+                  );
+              }),
+            ),
+            const Divider(height: 1),
+            for (final item in widget.person.items)
+              CheckboxListTile(
+                dense: true,
+                value: _selected.contains(item.id),
+                title: Text(item.label),
+                secondary: Text(item.price.toStringAsFixed(2)),
+                onChanged: (value) => setState(() {
+                  if (value == true) {
+                    _selected.add(item.id);
+                  } else {
+                    _selected.remove(item.id);
+                  }
+                }),
+              ),
+            const SizedBox(height: 8),
+            if (widget.targets.isNotEmpty)
+              InputDecorator(
+              decoration: InputDecoration(
+                labelText: tipData.t('session_move_item'),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  value: _toUid,
+                  items: [
+                    for (final member in widget.targets)
+                      DropdownMenuItem(
+                        value: member.uid,
+                        child: Text(member.name),
+                      ),
+                  ],
+                  onChanged: (value) =>
+                      setState(() => _toUid = value ?? _toUid),
+                ),
+              ),
+              ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(tipData.t('cancel')),
+        ),
+        TextButton(
+          onPressed: _selected.isEmpty
+              ? null
+              : () => Navigator.of(context).pop(
+                  _MoveRequest(_selected.toList(), _toUid),
+                ),
+          child: Text(widget.action),
+        ),
       ],
     );
   }

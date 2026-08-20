@@ -88,7 +88,9 @@ const Map<String, String> kDefaultTranslations = {
   "session_leave": "Leave",
   "session_close": "Close session",
   "session_close_body":
-      "This ends the session for everyone. Each person keeps their own copy.",
+      "This stops the table for everyone: no one can add or change items "
+      "after it. Everybody stays on this screen to save their own copy.",
+  "session_close_hint": "Stops everyone adding items. Nobody is removed.",
   "session_closed": "Session closed",
   "session_save_copy": "Save to history",
   "session_finish": "Done",
@@ -103,4 +105,23 @@ const Map<String, String> kDefaultTranslations = {
   "session_error_denied": "The session refused this device",
   "session_error_network": "No connection to the session",
   "session_error_signin": "Shared sessions are unavailable right now",
+  "session_move_item": "Move to",
+  "session_move_item_hint": "Whose item is this?",
+  "session_move_failed": "Could not move that item",
+  "session_move_items": "Move items",
+  "session_move_select_all": "Select all",
+  "session_move_confirm": "Move",
+  "session_move_none": "Nothing selected to move",
+  "session_remove_member": "Remove person",
+  "session_remove_member_confirm":
+      "Remove them from the table? They can join again with the code.",
+  "session_remove_member_has_items":
+      "Move their items to someone else first.",
+  "session_remove_member_failed": "Could not remove that person",
+  "session_remove_items": "Delete items",
+  "session_remove_items_confirm": "Delete",
+  "session_remove_items_failed": "Could not delete those items",
+  "session_share_invite": "Share",
+  "session_share_invite_text": "Join my table with the code",
+  "session_share_copied": "Invite copied",
 };

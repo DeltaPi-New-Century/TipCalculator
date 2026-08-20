@@ -16,6 +16,28 @@ class Config {
   static const String dbPath =
       'https://gist.githubusercontent.com/eastanganelli/f36853425b3b58a064d44f4920b8a588/raw/';
 
+  /// Where the web build is hosted, used to build shareable join links.
+  ///
+  /// Never hardcode a deployment into the source: this moves between local
+  /// testing, a staging host and production, and the phone app has no way to
+  /// discover it. Pass it at build time instead:
+  ///
+  ///     --dart-define=WEB_BASE_URL=https://tip.example.com
+  ///
+  /// Empty means "no web deployment": sharing then falls back to the code on
+  /// its own, which is still everything a person needs to join from the app.
+  static const String webBaseUrl = String.fromEnvironment('WEB_BASE_URL');
+
+  /// The join URL for [code], or null when no web deployment is configured.
+  static String? joinUrl(final String code) {
+    if (webBaseUrl.isEmpty) return null;
+    // Tolerates a trailing slash in the define rather than producing '//?'.
+    final base = webBaseUrl.endsWith('/')
+        ? webBaseUrl.substring(0, webBaseUrl.length - 1)
+        : webBaseUrl;
+    return '$base/?code=$code';
+  }
+
   /// reCAPTCHA v3 site key, used by App Check on the web build only.
   ///
   /// Not a secret -- a reCAPTCHA site key is public by design and is meant to

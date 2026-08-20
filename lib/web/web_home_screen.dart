@@ -42,15 +42,24 @@ class _WebJoinScreenState extends State<_WebJoinScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _codeController = TextEditingController();
 
+  /// Whether the code arrived in the URL rather than being typed.
+  bool _codeFromLink = false;
+
   @override
   void initState() {
     super.initState();
     _nameController.text = context.read<TipData>().ownerName;
     // A host can paste the whole URL into the group chat rather than reading
     // six characters out loud: /?code=K7QM2X lands here prefilled.
+    //
+    // Prefilled, never submitted. Joining writes a member into someone else's
+    // session, so it stays an act the visitor performs, not a side effect of
+    // opening a link -- a link that could have been forwarded on to people who
+    // were never at the table.
     final shared = Uri.base.queryParameters['code'];
     if (shared != null && SessionCode.isValid(shared)) {
       _codeController.text = SessionCode.normalize(shared);
+      _codeFromLink = true;
     }
   }
 
@@ -61,23 +70,31 @@ class _WebJoinScreenState extends State<_WebJoinScreen> {
     super.dispose();
   }
 
-  /// Falls back to the generic word for a person, so an empty field still
-  /// produces a member the rest of the table can point at.
-  String get _displayName {
-    final typed = _nameController.text.trim();
-    if (typed.isNotEmpty) return typed;
-    return context.read<TipData>().t('person');
-  }
+  /// Whether the form may be submitted.
+  ///
+  /// The name is required here, unlike on mobile. A phone user who joins
+  /// nameless is still identifiable -- it is their phone, and they are sitting
+  /// at the table. A browser guest who joins as "Person" is a row nobody can
+  /// match to a face, and the whole point of the web build is telling the
+  /// table's members apart.
+  bool get _canJoin =>
+      _nameController.text.trim().isNotEmpty &&
+      SessionCode.isValid(_codeController.text);
 
   Future<void> _join() async {
     final tipData = context.read<TipData>();
     final sessionData = context.read<SessionData>();
     final messenger = ScaffoldMessenger.of(context);
 
-    await tipData.setOwnerName(_nameController.text);
+    // Guarded rather than assumed: the button is disabled without it, but a
+    // keyboard submit reaches here too.
+    if (!_canJoin) return;
+
+    final name = _nameController.text.trim();
+    await tipData.setOwnerName(name);
     final ok = await sessionData.join(
       code: _codeController.text,
-      displayName: _displayName,
+      displayName: name,
     );
     if (ok || !mounted) return;
 
@@ -96,8 +113,8 @@ class _WebJoinScreenState extends State<_WebJoinScreen> {
     final colors = context.colors;
     final tipData = context.watch<TipData>();
     final sessionData = context.watch<SessionData>();
-    final codeReady = SessionCode.isValid(_codeController.text);
     final backendDown = !FirebaseBootstrap.isReady;
+    final canSubmit = _canJoin && !sessionData.isBusy && !backendDown;
 
     return Scaffold(
       appBar: AppBar(title: Text(tipData.t('session_join'))),
@@ -121,7 +138,11 @@ class _WebJoinScreenState extends State<_WebJoinScreen> {
                   controller: _nameController,
                   textCapitalization: TextCapitalization.words,
                   maxLength: 40,
+                  // Focused first when the code arrived in the link, since
+                  // then the name is the only thing still missing.
+                  autofocus: _codeFromLink,
                   textInputAction: TextInputAction.next,
+                  onChanged: (value) => setState(() {}),
                   decoration: InputDecoration(
                     labelText: tipData.t('session_your_name'),
                     counterText: '',
@@ -132,12 +153,10 @@ class _WebJoinScreenState extends State<_WebJoinScreen> {
                   controller: _codeController,
                   textCapitalization: TextCapitalization.characters,
                   maxLength: SessionCode.length,
-                  autofocus: true,
+                  autofocus: !_codeFromLink,
                   onChanged: (value) => setState(() {}),
                   onSubmitted: (_) {
-                    if (codeReady && !sessionData.isBusy && !backendDown) {
-                      _join();
-                    }
+                    if (canSubmit) _join();
                   },
                   style: AppTheme.figure(
                     size: 22,
@@ -174,9 +193,7 @@ class _WebJoinScreenState extends State<_WebJoinScreen> {
                         )
                       : const Icon(Icons.login, size: 20),
                   label: Text(tipData.t('session_join')),
-                  onPressed: (sessionData.isBusy || !codeReady || backendDown)
-                      ? null
-                      : _join,
+                  onPressed: canSubmit ? _join : null,
                 ),
                 if (backendDown) ...[
                   const SizedBox(height: 16),

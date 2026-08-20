@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tip_calculator/schemas/session.dart';
 import 'package:tip_calculator/service/auth_service.dart';
 import 'package:tip_calculator/service/session_service.dart';
@@ -20,7 +21,52 @@ class SessionData with ChangeNotifier {
   SessionError? _lastError;
   bool _busy = false;
 
-  SessionData(this._tipData);
+  /// Where the attached code is remembered across launches.
+  static const String _codeKey = 'session_active_code';
+
+  SessionData(this._tipData) {
+    _restore();
+  }
+
+  /// Reattaches to the session this device was in when it last closed.
+  ///
+  /// Closing the app -- or, in the browser, reloading the tab -- used to strand
+  /// the user: the session, their membership and their items were all still in
+  /// the database, but the app had forgotten the code, and a host who had not
+  /// written it down could not get back to their own table.
+  ///
+  /// Silent by design. Every failure means "start on the join screen", which is
+  /// where the user already expected to be.
+  Future<void> _restore() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final saved = prefs.getString(_codeKey);
+      if (saved == null) return;
+
+      final result = await SessionService.resume(saved);
+      if (!result.isSuccess) {
+        await prefs.remove(_codeKey);
+        return;
+      }
+      _attach(saved);
+    } catch (error) {
+      debugPrint('Could not restore session: $error');
+    }
+  }
+
+  /// Fire and forget: remembering the code must never delay attaching to it.
+  Future<void> _remember(final String? code) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (code == null) {
+        await prefs.remove(_codeKey);
+      } else {
+        await prefs.setString(_codeKey, code);
+      }
+    } catch (error) {
+      debugPrint('Could not persist session code: $error');
+    }
+  }
 
   Session? get session => _session;
   String? get code => _code;
@@ -99,6 +145,7 @@ class SessionData with ChangeNotifier {
     _subscription?.cancel();
     _code = code;
     _lastError = null;
+    _remember(code);
 
     _subscription = SessionService.watch(code).listen(
       (session) {
@@ -131,6 +178,7 @@ class SessionData with ChangeNotifier {
     _subscription = null;
     _session = null;
     _code = null;
+    _remember(null);
     _tipData.setSessionPersons(null);
     _tipData.releaseTipLock();
     notifyListeners();
@@ -147,6 +195,56 @@ class SessionData with ChangeNotifier {
     if (code == null) return;
     await SessionService.removeItem(code: code, itemId: itemId);
   }
+
+  /// Moves an item onto another member. Host only; the rules enforce it too.
+  Future<bool> transferItem({
+    required final String itemId,
+    required final String toUid,
+  }) async {
+    final code = _code;
+    if (code == null || !isHost) return false;
+    return SessionService.transferItem(
+      code: code,
+      itemId: itemId,
+      toUid: toUid,
+    );
+  }
+
+  /// Moves several items onto another member at once. Host only.
+  Future<bool> transferItems({
+    required final Iterable<String> itemIds,
+    required final String toUid,
+  }) async {
+    final code = _code;
+    if (code == null || !isHost) return false;
+    return SessionService.transferItems(
+      code: code,
+      itemIds: itemIds,
+      toUid: toUid,
+    );
+  }
+
+  /// Deletes several items outright. Host only.
+  Future<bool> removeItems(final Iterable<String> itemIds) async {
+    final code = _code;
+    if (code == null || !isHost) return false;
+    return SessionService.removeItems(code: code, itemIds: itemIds);
+  }
+
+  /// Removes someone from the table. Host only, and only once their items
+  /// have been moved elsewhere.
+  ///
+  /// Returns the reason it failed, or null on success.
+  Future<SessionError?> removeMember(final String uid) async {
+    final code = _code;
+    if (code == null) return SessionError.notFound;
+    if (!isHost) return SessionError.notOwner;
+    return SessionService.removeMember(code: code, uid: uid);
+  }
+
+  /// Items belonging to one member, for deciding what a removal would strand.
+  List<SessionItem> itemsOf(final String uid) =>
+      _session?.items.where((item) => item.uid == uid).toList() ?? const [];
 
   /// Pushes the host's tip choice to the table. No-op for guests, whose
   /// controls are disabled anyway.
@@ -195,8 +293,19 @@ class SessionData with ChangeNotifier {
   Future<void> finish() async {
     final code = _code;
     if (code == null) return;
+
+    // "Everyone has had the chance" was an assumption, not a fact. The host is
+    // usually first to tap save, and destroying the node here pulled it out
+    // from under everyone still reading it: their stream emitted null, the
+    // table emptied, and the copy they were about to save was gone. Nobody
+    // but the host could ever save a shared bill.
+    //
+    // So the node is only deleted once this device is the last one in it.
+    // Otherwise it is left to expire, which costs nothing -- expired sessions
+    // are already unreadable by rule, and nothing sweeps them anyway.
+    final lastOneHere = members.length <= 1;
     final owned = isHost;
     _detach();
-    if (owned) await SessionService.destroy(code);
+    if (owned && lastOneHere) await SessionService.destroy(code);
   }
 }
