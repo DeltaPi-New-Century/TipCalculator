@@ -364,11 +364,11 @@ class _ActiveSessionView extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            TextButton.icon(
+            /*TextButton.icon(
               icon: const Icon(Icons.copy, size: 16),
               label: Text(tipData.t('session_code')),
               onPressed: () => Clipboard.setData(ClipboardData(text: code)),
-            ),
+            ),*/
             TextButton.icon(
               icon: const Icon(Icons.ios_share, size: 16),
               label: Text(tipData.t('session_share_invite')),

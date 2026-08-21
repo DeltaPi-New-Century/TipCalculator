@@ -16,17 +16,27 @@ class Config {
   static const String dbPath =
       'https://gist.githubusercontent.com/eastanganelli/f36853425b3b58a064d44f4920b8a588/raw/';
 
-  /// Where the web build is hosted, used to build shareable join links.
+  /// Where the web build is hosted, for shareable join links.
   ///
-  /// Never hardcode a deployment into the source: this moves between local
-  /// testing, a staging host and production, and the phone app has no way to
-  /// discover it. Pass it at build time instead:
+  /// One line to change when the deployment moves. Keeping it here rather than
+  /// inline at the call site means it is replaceable without hunting through
+  /// the UI code, and a build can still override it without touching the
+  /// source at all:
   ///
-  ///     --dart-define=WEB_BASE_URL=https://tip.example.com
+  ///     --dart-define=WEB_BASE_URL=https://staging.example.com
   ///
-  /// Empty means "no web deployment": sharing then falls back to the code on
-  /// its own, which is still everything a person needs to join from the app.
-  static const String webBaseUrl = String.fromEnvironment('WEB_BASE_URL');
+  /// The default matters: the phone app is where invites are actually shared,
+  /// and requiring a flag on every `flutter run` meant the link was silently
+  /// missing from every invite sent during development.
+  ///
+  /// Set it empty to share the code with no link at all.
+  static const String _defaultWebBaseUrl =
+      'https://tipcalculator-a7607.web.app';
+
+  static const String webBaseUrl = String.fromEnvironment(
+    'WEB_BASE_URL',
+    defaultValue: _defaultWebBaseUrl,
+  );
 
   /// The join URL for [code], or null when no web deployment is configured.
   static String? joinUrl(final String code) {

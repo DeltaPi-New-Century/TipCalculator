@@ -293,6 +293,9 @@
     },
     {
      "session_close_hint": "Impide que todos agreguen ítems. No echa a nadie."
+    },
+    {
+     "history_blocked_session": "Salí de la sesión antes de abrir una cuenta guardada."
     }
    ]
   },
@@ -589,6 +592,9 @@
     },
     {
      "session_close_hint": "Stops everyone adding items. Nobody is removed."
+    },
+    {
+     "history_blocked_session": "Leave the session before opening a saved bill."
     }
    ]
   }

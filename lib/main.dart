@@ -107,12 +107,19 @@ class MyHomePage extends StatelessWidget {
             tooltip: tipData.t('history_save'),
             onPressed: () => _saveCurrent(context),
           ),
+          // Closed during a session: a saved bill cannot be restored over a
+          // live table, so opening the list would only offer entries that
+          // refuse to load.
           IconButton(
             icon: const Icon(Icons.history),
-            tooltip: tipData.t('history_title'),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const MyHistoryScreen()),
-            ),
+            tooltip: context.watch<SessionData>().isActive
+                ? tipData.t('history_blocked_session')
+                : tipData.t('history_title'),
+            onPressed: context.watch<SessionData>().isActive
+                ? null
+                : () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const MyHistoryScreen()),
+                  ),
           ),
           IconButton(
             icon: const Icon(Icons.contrast),

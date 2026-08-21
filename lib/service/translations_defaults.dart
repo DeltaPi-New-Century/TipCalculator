@@ -33,6 +33,8 @@ const Map<String, String> kDefaultTranslations = {
   "history_saved": "Saved to history",
   "history_nothing_to_save": "Enter an amount first",
   "history_empty": "No saved calculations yet.",
+  "history_blocked_session":
+      "Leave the session before opening a saved bill.",
   "history_deleted": "Deleted",
   "history_clear": "Clear",
   "history_clear_title": "Clear history",

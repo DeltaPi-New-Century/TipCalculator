@@ -176,7 +176,17 @@ class _HistoryRow extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          context.read<TipData>().loadFrom(entry);
+          final tipData = context.read<TipData>();
+          if (!tipData.loadFrom(entry)) {
+            // Declined because a session owns the table. Say so rather than
+            // popping back to an unchanged screen.
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(content: Text(tipData.t('history_blocked_session'))),
+              );
+            return;
+          }
           Navigator.of(context).pop();
         },
         child: Padding(
