@@ -2,7 +2,7 @@ name: tip_calculator
 description: "Tip Calculator for Lazy People"
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 2.0.7+9
+version: 2.10.1+11
 
 environment:
   sdk: ^3.8.1
@@ -15,9 +15,14 @@ dependencies:
   provider: ^6.1.5
   language_code: ^0.5.5
   path_provider: ^2.1.5
-  flutter_dotenv: ^5.2.1
   cupertino_icons: ^1.0.8
   shared_preferences: ^2.5.3
+  share_plus: ^13.3.0
+  firebase_core: ^4.13.0
+  firebase_auth: ^6.5.7
+  firebase_app_check: ^0.4.6
+  firebase_ai: ^3.15.0
+  firebase_database: ^12.4.7
   # google_mobile_ads: ^5.2.0
 
 dev_dependencies:
@@ -29,7 +34,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/.env
+    # Bundled so a stale remote database can never leave half the UI in one
+    # language and half in another.
+    - resources/tipcalculator_languages.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:
