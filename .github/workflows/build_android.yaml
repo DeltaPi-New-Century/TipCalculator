@@ -1,15 +1,83 @@
 name: Build
+
 on:
   push:
-    branches:
-      - master
+    tags:
+      # v2.0.8            -> release  -> production track
+      # v2.0.8-beta.1     -> beta     -> beta track
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-beta*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to (re)build, e.g. v2.0.8 or v2.0.8-beta.1'
+        required: true
+        type: string
+
+concurrency:
+  group: build-android-${{ inputs.tag || github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Build Signal
+      - name: Resolve tag
+        id: tag
+        env:
+          RAW_TAG: ${{ inputs.tag || github.ref_name }}
         run: |
-          curl -X POST https://api.github.com/repos/DeltaPi-New-Century/TC2Infra/dispatches \
-          -H 'Accept: application/vnd.github.v3+json' \
-          -H 'Authorization: token ${{ secrets.TIPCALCULATOR_PAT }}' \
-          --data '{"event_type": "build-tipcalculator", "client_payload": {"sha": "${{ github.sha }}", "ref": "${{ github.ref }}"}}'
+          TAG="$RAW_TAG"
+          if ! echo "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-beta.*)?$'; then
+            echo "::error::Tag '$TAG' does not match vMAJOR.MINOR.PATCH[-beta*]"
+            exit 1
+          fi
+          if echo "$TAG" | grep -q -- '-beta'; then
+            CHANNEL=beta
+            TRACK=beta
+          else
+            CHANNEL=release
+            TRACK=production
+          fi
+          echo "tag=$TAG"          >> "$GITHUB_OUTPUT"
+          echo "channel=$CHANNEL"  >> "$GITHUB_OUTPUT"
+          echo "track=$TRACK"      >> "$GITHUB_OUTPUT"
+          echo "### $CHANNEL build for \`$TAG\` (track: $TRACK)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Checkout tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.tag.outputs.tag }}
+          fetch-depth: 0
+
+      - name: Verify tag matches pubspec version
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          PUBSPEC_VERSION="$(grep -m1 '^version:' pubspec.yaml | sed -E 's/^version:[[:space:]]*//; s/\+.*$//')"
+          TAG_VERSION="$(echo "$TAG" | sed -E 's/^v//')"
+          if [ "$PUBSPEC_VERSION" != "$TAG_VERSION" ]; then
+            echo "::error::pubspec.yaml version '$PUBSPEC_VERSION' != tag version '$TAG_VERSION'"
+            exit 1
+          fi
+
+      - name: Build Signal
+        env:
+          GH_TOKEN: ${{ secrets.TIPCALCULATOR_PAT }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          CHANNEL: ${{ steps.tag.outputs.channel }}
+          TRACK: ${{ steps.tag.outputs.track }}
+        run: |
+          PAYLOAD="$(jq -n \
+            --arg sha     "$(git rev-parse HEAD)" \
+            --arg ref     "refs/tags/$TAG" \
+            --arg tag     "$TAG" \
+            --arg channel "$CHANNEL" \
+            --arg track   "$TRACK" \
+            '{event_type: "build-tipcalculator", client_payload: {sha: $sha, ref: $ref, tag: $tag, channel: $channel, track: $track}}')"
+
+          curl --fail-with-body -sS -X POST \
+            https://api.github.com/repos/DeltaPi-New-Century/TC2Infra/dispatches \
+            -H 'Accept: application/vnd.github.v3+json' \
+            -H "Authorization: token $GH_TOKEN" \
+            --data "$PAYLOAD"
