@@ -3,14 +3,14 @@ name: Build
 on:
   push:
     tags:
-      # v2.0.8            -> release  -> production track
-      # v2.0.8-beta.1     -> beta     -> beta track
-      - 'v[0-9]+.[0-9]+.[0-9]+'
-      - 'v[0-9]+.[0-9]+.[0-9]+-beta*'
+      # 2.10.1            -> release  -> production track
+      # 2.10.1-beta.1     -> beta     -> beta track
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-beta*'
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Existing tag to (re)build, e.g. v2.0.8 or v2.0.8-beta.1'
+        description: 'Existing tag to (re)build, e.g. 2.10.1 or 2.10.1-beta.1'
         required: true
         type: string
 
@@ -28,8 +28,8 @@ jobs:
           RAW_TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           TAG="$RAW_TAG"
-          if ! echo "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-beta.*)?$'; then
-            echo "::error::Tag '$TAG' does not match vMAJOR.MINOR.PATCH[-beta*]"
+          if ! echo "$TAG" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-beta.*)?$'; then
+            echo "::error::Tag '$TAG' does not match MAJOR.MINOR.PATCH[-beta*]"
             exit 1
           fi
           if echo "$TAG" | grep -q -- '-beta'; then
@@ -55,7 +55,7 @@ jobs:
           TAG: ${{ steps.tag.outputs.tag }}
         run: |
           PUBSPEC_VERSION="$(grep -m1 '^version:' pubspec.yaml | sed -E 's/^version:[[:space:]]*//; s/\+.*$//')"
-          TAG_VERSION="$(echo "$TAG" | sed -E 's/^v//')"
+          TAG_VERSION="$(echo "$TAG" | sed -E 's/-beta.*$//')"
           if [ "$PUBSPEC_VERSION" != "$TAG_VERSION" ]; then
             echo "::error::pubspec.yaml version '$PUBSPEC_VERSION' != tag version '$TAG_VERSION'"
             exit 1
