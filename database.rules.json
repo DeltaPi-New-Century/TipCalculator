@@ -43,7 +43,7 @@
             ".write": "auth != null && root.child('sessions/' + $code + '/status').val() === 'open' && (!data.exists() || data.child('uid').val() === auth.uid) && (!newData.exists() || newData.child('uid').val() === auth.uid)",
             ".validate": "newData.hasChildren(['uid','label','price'])",
             "uid": {
-              ".validate": "newData.val() === auth.uid"
+              ".validate": "(newData.val() === auth.uid || root.child('sessions/' + $code + '/ownerUid').val() === auth.uid) && root.child('sessions/' + $code + '/members/' + newData.val()).exists()"
             },
             "label": {
               ".validate": "newData.isString() && newData.val().length <= 60"

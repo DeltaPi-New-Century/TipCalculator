@@ -129,6 +129,11 @@ class TipData with ChangeNotifier {
   void setSessionPersons(final List<Person>? people) {
     _sessionPersons = people;
     if (people != null) _splitMode = SplitMode.byItems;
+    // Every local mutation syncs the derived fields; session updates arrive
+    // through here instead, and used not to. The bill on the main screen then
+    // stayed at whatever it was when the session started, and only corrected
+    // itself when switching modes forced a resync.
+    _syncDerivedFields();
     notifyListeners();
   }
 
@@ -344,7 +349,9 @@ class TipData with ChangeNotifier {
   void _syncDerivedFields() {
     if (!isSplitByItems) return;
     amountController.text = amount.toStringAsFixed(2).replaceAll('.', ',');
-    peopleController.text = _persons.length.toString();
+    // The session list when there is one -- `_persons` is the local table,
+    // which is not what the head count refers to during a session.
+    peopleController.text = persons.length.toString();
   }
 
   Person? _findPerson(final String personId) {
@@ -355,7 +362,13 @@ class TipData with ChangeNotifier {
   }
 
   /// Loads a saved calculation back into the calculator, text fields included.
-  void loadFrom(final HistoryEntry entry) {
+  ///
+  /// Refused during a session. The table on screen belongs to the server then,
+  /// and the next snapshot would overwrite the restored bill anyway -- so this
+  /// looked like it worked, wrote over the local list, and left nothing to
+  /// show for it. Returns false when it declined.
+  bool loadFrom(final HistoryEntry entry) {
+    if (isSessionActive) return false;
     _amount = entry.amount;
     _people = entry.people;
     _tipPercent = entry.tipPercent;
@@ -390,6 +403,7 @@ class TipData with ChangeNotifier {
       _splitMode = SplitMode.evenly;
     }
     notifyListeners();
+    return true;
   }
 
   /// Fetches the customary tip for the detected country and applies the

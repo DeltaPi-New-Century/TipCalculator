@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:tip_calculator/service/auth_service.dart';
+import 'package:tip_calculator/service/config.dart';
 import 'package:tip_calculator/service/history_data.dart';
 import 'package:tip_calculator/service/session_code.dart';
 import 'package:tip_calculator/service/session_data.dart';
@@ -91,6 +93,10 @@ class _StartSessionViewState extends State<_StartSessionView> {
     return context.read<TipData>().t('person');
   }
 
+  /// Required to host. A guest joining nameless is one anonymous row; a
+  /// nameless host is the label on the whole table.
+  bool get _nameReady => _nameController.text.trim().isNotEmpty;
+
   void _report(final SessionError? error) {
     if (error == null || !mounted) return;
     final tipData = context.read<TipData>();
@@ -105,6 +111,9 @@ class _StartSessionViewState extends State<_StartSessionView> {
   Future<void> _create() async {
     final tipData = context.read<TipData>();
     final sessionData = context.read<SessionData>();
+    // Guarded as well as disabled: the host's name labels the table for
+    // everyone who joins, and "Person" tells them nothing.
+    if (!_nameReady) return;
     await tipData.setOwnerName(_nameController.text);
     final ok = await sessionData.create(
       displayName: _displayName,
@@ -143,6 +152,7 @@ class _StartSessionViewState extends State<_StartSessionView> {
           controller: _nameController,
           textCapitalization: TextCapitalization.words,
           maxLength: 40,
+          onChanged: (value) => setState(() {}),
           decoration: InputDecoration(
             labelText: tipData.t('session_your_name'),
             counterText: '',
@@ -166,7 +176,7 @@ class _StartSessionViewState extends State<_StartSessionView> {
                 )
               : const Icon(Icons.add_circle_outline, size: 20),
           label: Text(tipData.t('session_create')),
-          onPressed: sessionData.isBusy ? null : _create,
+          onPressed: (sessionData.isBusy || !_nameReady) ? null : _create,
         ),
         const SizedBox(height: 24),
         Row(
@@ -220,6 +230,41 @@ class _StartSessionViewState extends State<_StartSessionView> {
 class _ActiveSessionView extends StatelessWidget {
   const _ActiveSessionView();
 
+  /// Text-only invite: the code, plus the web link when one is configured.
+  ///
+  /// Text rather than a rich link on purpose -- this gets pasted into whatever
+  /// chat the table already uses, and plain text survives all of them. The
+  /// code comes first because it is what someone with the app installed needs;
+  /// the URL is for everyone else.
+  @visibleForTesting
+  static String buildInviteText(final TipData tipData, final String code) {
+    final link = Config.joinUrl(code);
+    final invite = '${tipData.t('session_share_invite_text')} $code';
+    return link == null ? invite : '$invite\n$link';
+  }
+
+  Future<void> _shareInvite(
+    final BuildContext context,
+    final String code,
+  ) async {
+    final tipData = context.read<TipData>();
+    final messenger = ScaffoldMessenger.of(context);
+    final text = buildInviteText(tipData, code);
+    try {
+      await SharePlus.instance.share(ShareParams(text: text));
+    } catch (error) {
+      // Desktop browsers have no share sheet at all. Falling back to the
+      // clipboard keeps the button useful instead of dead.
+      debugPrint('Share invite failed, copying instead: $error');
+      await Clipboard.setData(ClipboardData(text: text));
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text(tipData.t('session_share_copied'))),
+        );
+    }
+  }
+
   Future<void> _confirmClose(final BuildContext context) async {
     final tipData = context.read<TipData>();
     final sessionData = context.read<SessionData>();
@@ -235,6 +280,11 @@ class _ActiveSessionView extends StatelessWidget {
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
+            // Coloured as the destructive choice: it stops everyone else's
+            // table, not just this device's view of it.
+            style: TextButton.styleFrom(
+              foregroundColor: dialogContext.colors.tip,
+            ),
             child: Text(tipData.t('session_close')),
           ),
         ],
@@ -311,13 +361,20 @@ class _ActiveSessionView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton.icon(
-            icon: const Icon(Icons.copy, size: 16),
-            label: Text(tipData.t('session_code')),
-            onPressed: () => Clipboard.setData(ClipboardData(text: code)),
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            /*TextButton.icon(
+              icon: const Icon(Icons.copy, size: 16),
+              label: Text(tipData.t('session_code')),
+              onPressed: () => Clipboard.setData(ClipboardData(text: code)),
+            ),*/
+            TextButton.icon(
+              icon: const Icon(Icons.ios_share, size: 16),
+              label: Text(tipData.t('session_share_invite')),
+              onPressed: () => _shareInvite(context, code),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
         FieldLabel(tipData.t('session_members')),
@@ -370,7 +427,7 @@ class _ActiveSessionView extends StatelessWidget {
             onPressed: () => _saveAndLeave(context),
           ),
         ] else ...[
-          if (sessionData.isHost)
+          if (sessionData.isHost) ...[
             FilledButton.icon(
               style: FilledButton.styleFrom(
                 backgroundColor: colors.ink,
@@ -383,6 +440,17 @@ class _ActiveSessionView extends StatelessWidget {
                   ? null
                   : () => _confirmClose(context),
             ),
+            // Said before the tap, not only in the confirmation: closing is
+            // the one control here that acts on everybody's app at once, and
+            // "Close" alone reads like it just dismisses this screen.
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Text(
+                tipData.t('session_close_hint'),
+                style: TextStyle(fontSize: 12, color: colors.ink3),
+              ),
+            ),
+          ],
           const SizedBox(height: 8),
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(

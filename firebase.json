@@ -2,6 +2,16 @@
   "database": {
     "rules": "database.rules.json"
   },
+  "hosting": {
+    "public": "build/web",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
   "flutter": {
     "platforms": {
       "android": {
@@ -15,7 +25,8 @@
         "lib/firebase_options.dart": {
           "projectId": "tipcalculator-a7607",
           "configurations": {
-            "android": "1:175553083642:android:b0a89d91879789b4f03143"
+            "android": "1:175553083642:android:b0a89d91879789b4f03143",
+            "web": "1:175553083642:web:3266d1450e47edbbf03143"
           }
         }
       }
