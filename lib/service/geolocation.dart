@@ -3,7 +3,7 @@ import 'package:tip_calculator/service/config.dart';
 import 'package:tip_calculator/service/network.dart';
 
 class Geolocation {
-  static String ipApiUrl = Config.IP_API_URL;
+  static String ipApiUrl = Config.ipApiUrl;
 
   /// Fetches the current location of the user based on their IP address.
   /// Returns the location code (like country code) for the specified key.
