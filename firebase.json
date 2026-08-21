@@ -1,0 +1,24 @@
+{
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "tipcalculator-a7607",
+          "appId": "1:175553083642:android:b0a89d91879789b4f03143",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "tipcalculator-a7607",
+          "configurations": {
+            "android": "1:175553083642:android:b0a89d91879789b4f03143"
+          }
+        }
+      }
+    }
+  }
+}

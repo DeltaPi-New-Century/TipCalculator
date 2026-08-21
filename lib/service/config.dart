@@ -1,25 +1,18 @@
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
-
+/// Endpoints the app talks to.
+///
+/// Nothing here is a secret. The Gemini credentials that used to live in this
+/// file (and in `assets/.env`) are gone: an API key compiled into a mobile app
+/// is extractable from the bundle, so it can never be kept private. The tip
+/// recommendation will come back through Firebase AI Logic, which authenticates
+/// via the Firebase SDK and App Check instead of a shipped key.
 class Config {
-  /// GEMINI
-  static final String _GEMINI_API_URL =
-      // dotenv.env['GEMINI_API_KEY'] ??
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
-  static final String _GEMINI_API_KEY =
-      /* dotenv.env['GEMINI_API_URL'] ?? */ '';
+  const Config._();
 
-  /// IP_API
-  static final String _IP_API_URL =
-      // dotenv.env['IP_API_URL'] ??
+  /// IP geolocation, used to pick the country's currency and tipping norms.
+  static const String ipApiUrl =
       'http://ip-api.com/json/?fields=status,country,countryCode';
 
-  /// GITHUB
-  static final String _DB_PATH =
-      // dotenv.env['DB_PATH']
+  /// Country/currency/translation database.
+  static const String dbPath =
       'https://gist.githubusercontent.com/eastanganelli/f36853425b3b58a064d44f4920b8a588/raw/';
-
-  static String get GEMINI_API_URL => _GEMINI_API_URL;
-  static String get GEMINI_API_KEY => _GEMINI_API_KEY;
-  static String get IP_API_URL => _IP_API_URL;
-  static String get DB_PATH => _DB_PATH;
 }
