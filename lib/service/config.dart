@@ -31,7 +31,7 @@ class Config {
   ///
   /// Set it empty to share the code with no link at all.
   static const String _defaultWebBaseUrl =
-      'https://tipcalculator-a7607.web.app';
+      'https://tipcalculator.poverflow.dpdns.org';
 
   static const String webBaseUrl = String.fromEnvironment(
     'WEB_BASE_URL',

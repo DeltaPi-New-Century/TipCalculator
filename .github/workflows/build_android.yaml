@@ -18,6 +18,11 @@ concurrency:
   group: build-android-${{ inputs.tag || github.ref }}
   cancel-in-progress: false
 
+env:
+  # Highest versionCode already uploaded to Play, so generated codes never
+  # collide with builds made before this workflow owned the numbering.
+  BUILD_NUMBER_OFFSET: 100
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -39,10 +44,23 @@ jobs:
             CHANNEL=release
             TRACK=production
           fi
-          echo "tag=$TAG"          >> "$GITHUB_OUTPUT"
-          echo "channel=$CHANNEL"  >> "$GITHUB_OUTPUT"
-          echo "track=$TRACK"      >> "$GITHUB_OUTPUT"
-          echo "### $CHANNEL build for \`$TAG\` (track: $TRACK)" >> "$GITHUB_STEP_SUMMARY"
+
+          # The tag is the source of truth for the version name. TipCalculatorIaC
+          # must consume these as `flutter build --build-name/--build-number`,
+          # which override pubspec.yaml.
+          VERSION="$(echo "$TAG" | sed -E 's/-beta.*$//')"
+
+          # versionCode must strictly increase on every Play upload, and a tag
+          # gives no such guarantee (2.1.1 can follow 2.10.1). run_number does.
+          # BUILD_NUMBER_OFFSET keeps it above the highest code already uploaded.
+          BUILD_NUMBER=$(( BUILD_NUMBER_OFFSET + GITHUB_RUN_NUMBER ))
+
+          echo "tag=$TAG"                   >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION"           >> "$GITHUB_OUTPUT"
+          echo "build_number=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "channel=$CHANNEL"           >> "$GITHUB_OUTPUT"
+          echo "track=$TRACK"               >> "$GITHUB_OUTPUT"
+          echo "### $CHANNEL build \`$VERSION+$BUILD_NUMBER\` from tag \`$TAG\` (track: $TRACK)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Checkout tag
         uses: actions/checkout@v4
@@ -50,31 +68,35 @@ jobs:
           ref: ${{ steps.tag.outputs.tag }}
           fetch-depth: 0
 
-      - name: Verify tag matches pubspec version
+      - name: Note pubspec version drift
         env:
-          TAG: ${{ steps.tag.outputs.tag }}
+          VERSION: ${{ steps.tag.outputs.version }}
         run: |
+          # Informational only: the tag wins, pubspec.yaml is just the local dev
+          # default. A mismatch is worth seeing but must not block a release.
           PUBSPEC_VERSION="$(grep -m1 '^version:' pubspec.yaml | sed -E 's/^version:[[:space:]]*//; s/\+.*$//')"
-          TAG_VERSION="$(echo "$TAG" | sed -E 's/-beta.*$//')"
-          if [ "$PUBSPEC_VERSION" != "$TAG_VERSION" ]; then
-            echo "::error::pubspec.yaml version '$PUBSPEC_VERSION' != tag version '$TAG_VERSION'"
-            exit 1
+          if [ "$PUBSPEC_VERSION" != "$VERSION" ]; then
+            echo "::warning::pubspec.yaml says '$PUBSPEC_VERSION'; building '$VERSION' from the tag."
           fi
 
       - name: Build Signal
         env:
           GH_TOKEN: ${{ secrets.TIPCALCULATOR_PAT }}
           TAG: ${{ steps.tag.outputs.tag }}
+          VERSION: ${{ steps.tag.outputs.version }}
+          BUILD_NUMBER: ${{ steps.tag.outputs.build_number }}
           CHANNEL: ${{ steps.tag.outputs.channel }}
           TRACK: ${{ steps.tag.outputs.track }}
         run: |
           PAYLOAD="$(jq -n \
-            --arg sha     "$(git rev-parse HEAD)" \
-            --arg ref     "refs/tags/$TAG" \
-            --arg tag     "$TAG" \
-            --arg channel "$CHANNEL" \
-            --arg track   "$TRACK" \
-            '{event_type: "build-tipcalculator", client_payload: {sha: $sha, ref: $ref, tag: $tag, channel: $channel, track: $track}}')"
+            --arg sha          "$(git rev-parse HEAD)" \
+            --arg ref          "refs/tags/$TAG" \
+            --arg tag          "$TAG" \
+            --arg version      "$VERSION" \
+            --arg build_number "$BUILD_NUMBER" \
+            --arg channel      "$CHANNEL" \
+            --arg track        "$TRACK" \
+            '{event_type: "build-tipcalculator", client_payload: {sha: $sha, ref: $ref, tag: $tag, version: $version, build_number: $build_number, channel: $channel, track: $track}}')"
 
           # --location: a renamed repository answers 301 here, and curl neither
           # follows nor fails on that, so the dispatch would silently vanish.

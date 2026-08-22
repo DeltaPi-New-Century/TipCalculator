@@ -2,6 +2,7 @@
 """Build and release TipCalculator.
 
     python scripts/deploy.py web              build the web app, deploy hosting
+    python scripts/deploy.py web --host none  build the web app, deploy nothing
     python scripts/deploy.py android          build the release app bundle
     python scripts/deploy.py rules            deploy database rules only
     python scripts/deploy.py all
@@ -12,6 +13,7 @@ local runs and CI:
     WEB_BASE_URL         overrides Config._defaultWebBaseUrl in the build
     RECAPTCHA_SITE_KEY   App Check on web; unset means App Check stays off
     FIREBASE_PROJECT     defaults to DEFAULT_PROJECT below
+    WEB_HOST             firebase (default), cloudflare, or none
 
 Standard library only, and no third-party dependency, so a CI image needs
 nothing beyond python, flutter and the firebase CLI.
@@ -30,6 +32,7 @@ DEFAULT_PROJECT = "tipcalculator-a7607"
 WEB_ENTRYPOINT = "lib/main_web.dart"
 REPO_ROOT = Path(__file__).resolve().parent.parent
 BUNDLE_PATH = "build/app/outputs/bundle/release/app-release.aab"
+DEFAULT_WORKER = "tipcalculator-web"
 
 
 class Aborted(Exception):
@@ -119,6 +122,24 @@ def build_web(runner: Runner, args: argparse.Namespace) -> None:
     if not args.recaptcha_site_key:
         warn("RECAPTCHA_SITE_KEY unset: App Check is disabled in this web build")
 
+    # Building and publishing are separated by --host so CI can take the
+    # bundle and publish it in a step of its own, where a failure is
+    # attributable to the deploy rather than to the build.
+    if args.host == "none":
+        step("Built build/web; no hosting deploy (--host none)")
+        return
+
+    if args.host == "cloudflare":
+        runner.confirm(
+            f"Deploy {args.worker} to Cloudflare Workers? This replaces the live site."
+        )
+        step("Deploying Cloudflare Worker")
+        # Pinned major: wrangler ships breaking changes in majors, and an
+        # unpinned npx would pick them up silently on some future run.
+        runner.run("npx", "--yes", "wrangler@4", "deploy",
+                   "--config", args.wrangler_config)
+        return
+
     runner.confirm(f"Deploy hosting to {args.project}? This replaces the live site.")
     step("Deploying hosting")
     runner.run("firebase", "deploy", "--only", "hosting", "--project", args.project)
@@ -169,6 +190,22 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=os.environ.get("RECAPTCHA_SITE_KEY"),
         help="reCAPTCHA v3 site key, enabling App Check on web.",
     )
+    parser.add_argument(
+        "--host",
+        choices=["firebase", "cloudflare", "none"],
+        default=os.environ.get("WEB_HOST", "firebase"),
+        help="Where the web build is published (default: firebase).",
+    )
+    parser.add_argument(
+        "--worker",
+        default=os.environ.get("CLOUDFLARE_WORKER", DEFAULT_WORKER),
+        help=f"Cloudflare Worker name, for the prompt (default: {DEFAULT_WORKER}).",
+    )
+    parser.add_argument(
+        "--wrangler-config",
+        default=os.environ.get("WRANGLER_CONFIG", "wrangler.jsonc"),
+        help="Path to wrangler.jsonc, relative to the repo root.",
+    )
     parser.add_argument("--dry-run", action="store_true",
                         help="Print every command instead of running it.")
     parser.add_argument("--yes", "-y", action="store_true",
@@ -184,8 +221,13 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         require_tool("flutter")
-        if args.target != "android":
+        # `all` always deploys rules, so it needs firebase whatever --host says.
+        if args.target in ("rules", "all") or (
+            args.target == "web" and args.host == "firebase"
+        ):
             require_tool("firebase")
+        if args.target in ("web", "all") and args.host == "cloudflare":
+            require_tool("npx")
 
         step(f"Project: {args.project}   Target: {args.target}")
         if args.dry_run:
